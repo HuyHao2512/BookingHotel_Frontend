@@ -1,0 +1,42 @@
+.custom-modal .ant-modal-content {
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.custom-modal .ant-carousel .slick-prev,
+.custom-modal .ant-carousel .slick-next {
+  font-size: 18px;
+  color: #000;
+  background: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.custom-modal .ant-carousel .slick-prev:hover,
+.custom-modal .ant-carousel .slick-next:hover {
+  background: #f0f0f0;
+}
+.overflow-x-auto {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  max-width: 100%;
+}
+
+.w-16 {
+  width: 64px; /* Đảm bảo kích thước ảnh nhỏ */
+}
+
+.h-16 {
+  height: 64px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
