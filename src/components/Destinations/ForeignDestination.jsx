@@ -5,8 +5,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Import icon
 import useCitiesOfCountry from "../../hooks/useCitiesOfCountry";
-
+import { useNavigate } from "react-router-dom";
 const ForeignDestination = () => {
+  const navigate = useNavigate();
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const [swiperInstance, setSwiperInstance] = useState(null);
@@ -25,6 +26,10 @@ const ForeignDestination = () => {
       swiperInstance.navigation.update();
     }
   }, [swiperInstance]);
+
+  const handleChoiceCity = (dest) => {
+    navigate(`/search?cityName=${dest.name}`);
+  };
   return (
     <div className="w-full px-6 py-8">
       <div className="max-w-screen-xl mx-auto relative">
@@ -64,7 +69,11 @@ const ForeignDestination = () => {
           onSwiper={setSwiperInstance} // Lưu instance của Swiper vào state
         >
           {destinations.map((dest, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide
+              onClick={() => handleChoiceCity(dest)}
+              key={index}
+              className="cursor-pointer"
+            >
               <div className="relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-transform duration-300 transform hover:scale-105">
                 <img
                   src={dest.image}

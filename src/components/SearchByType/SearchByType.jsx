@@ -7,7 +7,7 @@ import {
   FaBed,
   FaHouseUser,
 } from "react-icons/fa";
-
+import { useNavigate } from "react-router-dom";
 // Hàm xáo trộn mảng (Fisher-Yates Shuffle)
 const shuffleArray = (array) => {
   const newArray = [...array];
@@ -19,6 +19,7 @@ const shuffleArray = (array) => {
 };
 
 export default function SearchByType({ types, onSelect }) {
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState(null);
   const [typeIcons, setTypeIcons] = useState({});
 
@@ -42,7 +43,8 @@ export default function SearchByType({ types, onSelect }) {
 
   const handleSelect = (type) => {
     setSelectedType(type);
-    if (onSelect) onSelect(type);
+    onSelect(type);
+    navigate(`/search?categoryId=${type._id}`);
   };
 
   return (
@@ -57,7 +59,7 @@ export default function SearchByType({ types, onSelect }) {
             return (
               <button
                 key={type.name}
-                onClick={() => handleSelect(type.name)}
+                onClick={() => handleSelect(type)}
                 className={`flex flex-col items-center justify-center p-5 rounded-xl shadow-md transition-all duration-300 transform ${
                   selectedType === type.name
                     ? "bg-blue-500 text-white shadow-lg scale-105"

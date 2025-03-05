@@ -25,3 +25,37 @@ export const getCityOfCountry = async (country) => {
   });
   return res.data;
 };
+export const getAllProperties = async () => {
+  const res = await instance.get("/property");
+  return res;
+};
+
+export const getOneProperty = async (id) => {
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZ21haWwuY29tIiwiX2lkIjoiNjdiMzYwODY5MjcwNTk4ODkwYjMzYjQ2Iiwicm9sZXMiOlsidXNlciJdLCJpYXQiOjE3NDA5OTYyODAsImV4cCI6MjAwMDE5NjI4MH0.o3wYPaGPufgDsFSXvGMvy_a-tBDLBs0z-AQwAjS5lvA";
+  const res = await axios.get(`${URL}/property/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
+
+export const getFilteredProperties = async (
+  cityName,
+  cityId,
+  amenities,
+  categoryId,
+  minRate
+) => {
+  const res = await instance.get("/property/filter", {
+    params: {
+      cityName,
+      cityId,
+      amenities,
+      categoryId,
+      minRate,
+    },
+  });
+  return res;
+};

@@ -15,6 +15,7 @@ import DashboardAdmin from "../pages/Admin/DashboardAdmin";
 import ListUser from "../pages/Admin/ListUser";
 import Discount from "../pages/Owner/Discount";
 import SignUpOwner from "../pages/AuthPage/SignUpOwner";
+import LikePage from "../pages/LikePage/LikePage";
 export const routes = [
   {
     path: "/",
@@ -41,12 +42,12 @@ export const routes = [
     isShowHeader: false,
   },
   {
-    path: "/property",
+    path: "/property/:id",
     page: PropertyPage,
     isShowHeader: true,
   },
   {
-    path: "/search",
+    path: "/search/",
     page: SearchPage,
     isShowHeader: true,
   },
@@ -59,6 +60,11 @@ export const routes = [
     path: "/booking-confirm",
     page: BookingConfirm,
     isShowHeader: false,
+  },
+  {
+    path: "/like",
+    page: LikePage,
+    isShowHeader: true,
   },
   {
     path: "/admin",

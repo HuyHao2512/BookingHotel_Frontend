@@ -1,12 +1,20 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { routes } from "./routes";
 import LayoutUser from "../src/layouts/LayoutUser/LayoutUser";
 import LayoutAdmin from "../src/layouts/LayoutAdmin/LayoutAdmin";
-
+import LoadingScreen from "./components/Home/LoadingScreen";
 function App() {
+  const [loading, setLoading] = useState(true);
   return (
-    <Router>
+    <>
+      <LoadingWrapper setLoading={setLoading} />
+      {loading && <LoadingScreen />}
       <Routes>
         {routes.map((route) => {
           const Page = route.page;
@@ -50,8 +58,18 @@ function App() {
           );
         })}
       </Routes>
-    </Router>
+    </>
   );
 }
+function LoadingWrapper({ setLoading }) {
+  const location = useLocation();
 
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 500); // Giả lập tải trang
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  return null;
+}
 export default App;

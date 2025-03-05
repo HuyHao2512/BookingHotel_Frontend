@@ -66,7 +66,10 @@ const Footer = () => {
 
           {/* Currency & Language */}
           <div className="mt-6 flex items-center justify-center">
-            <img src="public/images/logo.png" style={{ height: "50px" }} />
+            <img
+              src="https://res.cloudinary.com/dsfajbqyx/image/upload/v1741069874/t27rkfzasuv6jnswqjhl.png"
+              style={{ height: "50px" }}
+            />
           </div>
         </div>
       </div>

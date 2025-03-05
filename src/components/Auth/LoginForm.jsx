@@ -17,6 +17,8 @@ const LoginForm = ({ toggleForm }) => {
       const token = localStorage.getItem("accessToken");
       if (token) {
         const userData = jwtDecode(token);
+        localStorage.setItem("userId", userData._id);
+        localStorage.setItem("email", userData.email);
         console.log(userData);
         if (userData.roles.includes("admin")) {
           window.location.href = "/admin/dashboard";

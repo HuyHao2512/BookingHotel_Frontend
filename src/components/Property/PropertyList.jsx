@@ -5,114 +5,37 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Import icon
 import PropertyCard from "./PropertyCard";
-
-const hotels = [
-  {
-    id: 1,
-    name: "Vinpearl Resort",
-    address: "Nha Trang, Việt Nam",
-    rate: 5,
-    amenities: ["Wifi", "Parking", "Pool", "Gym"],
-    images: [
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632131/properties/y8liisphnkp8i4ve8okm.jpg",
-      },
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632130/properties/afcza42gr9iz7vb4ezxb.jpg",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Vinpearl Resort",
-    address: "Nha Trang, Việt Nam",
-    rate: 5,
-    amenities: ["Wifi", "Parking", "Pool", "Gym"],
-    images: [
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632131/properties/y8liisphnkp8i4ve8okm.jpg",
-      },
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632130/properties/afcza42gr9iz7vb4ezxb.jpg",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Vinpearl Resort",
-    address: "Nha Trang, Việt Nam",
-    rate: 5,
-    amenities: ["Wifi", "Parking", "Pool", "Gym"],
-    images: [
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632131/properties/y8liisphnkp8i4ve8okm.jpg",
-      },
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632130/properties/afcza42gr9iz7vb4ezxb.jpg",
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Vinpearl Resort",
-    address: "Nha Trang, Việt Nam",
-    rate: 5,
-    amenities: ["Wifi", "Parking", "Pool", "Gym"],
-    images: [
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632131/properties/y8liisphnkp8i4ve8okm.jpg",
-      },
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632130/properties/afcza42gr9iz7vb4ezxb.jpg",
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "Vinpearl Resort",
-    address: "Nha Trang, Việt Nam",
-    rate: 5,
-    amenities: ["Wifi", "Parking", "Pool", "Gym"],
-    images: [
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632131/properties/y8liisphnkp8i4ve8okm.jpg",
-      },
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632130/properties/afcza42gr9iz7vb4ezxb.jpg",
-      },
-    ],
-  },
-  {
-    id: 6,
-    name: "Vinpearl Resort",
-    address: "Nha Trang, Việt Nam",
-    rate: 5,
-    amenities: ["Wifi", "Parking", "Pool", "Gym"],
-    images: [
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632131/properties/y8liisphnkp8i4ve8okm.jpg",
-      },
-      {
-        url: "https://res.cloudinary.com/dsfajbqyx/image/upload/v1739632130/properties/afcza42gr9iz7vb4ezxb.jpg",
-      },
-    ],
-  },
-];
-
+import useProperties from "../../hooks/useProperties";
 function PropertyList() {
+  const { data: hotelsData, isLoading, isError } = useProperties();
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const [swiperInstance, setSwiperInstance] = useState(null);
-
+  const hotels = Array.isArray(hotelsData)
+    ? hotelsData.map((hotel) => ({
+        _id: hotel?._id || "",
+        name: hotel?.name || "Chưa có tên",
+        image: hotel?.images?.[0]?.url || "fallback-image-url.jpg",
+        rate: hotel?.rate ?? "Chưa có đánh giá",
+        address: hotel?.address || "Không có địa chỉ",
+      }))
+    : [];
   useEffect(() => {
-    if (swiperInstance && swiperInstance.params) {
+    if (
+      swiperInstance &&
+      swiperInstance.navigation &&
+      prevRef.current &&
+      nextRef.current
+    ) {
       swiperInstance.params.navigation.prevEl = prevRef.current;
       swiperInstance.params.navigation.nextEl = nextRef.current;
       swiperInstance.navigation.init();
       swiperInstance.navigation.update();
     }
   }, [swiperInstance]);
-
+  if (isLoading) return <p>Đang tải chỗ nghỉ...</p>;
+  if (isError) return <p>Lỗi khi tải chỗ nghỉ.</p>;
+  if (!hotels.length) return <p>Không có dữ liệu.</p>;
   return (
     <div className="w-full px-6 mt-6 py-8">
       <div className="max-w-screen-xl mx-auto relative">
@@ -149,6 +72,7 @@ function PropertyList() {
           slidesPerView={1}
           spaceBetween={20}
           loop={true}
+          navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
           breakpoints={{
             640: { slidesPerView: 2 },
             1024: { slidesPerView: 3 },
@@ -157,7 +81,7 @@ function PropertyList() {
           onSwiper={setSwiperInstance}
         >
           {hotels.map((hotel) => (
-            <SwiperSlide key={hotel.id}>
+            <SwiperSlide key={hotel._id}>
               <PropertyCard hotel={hotel} />
             </SwiperSlide>
           ))}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Rate, Row } from "antd";
+import { Button, Col, message, Rate, Row } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
 import ButtonDetail from "../Button/ButtonDetail";
 const HotelCard = ({ hotel }) => {
@@ -22,7 +22,7 @@ const HotelCard = ({ hotel }) => {
             {hotel.address}
           </p>
           <p className="ml-4 mt-2 text-md line-clamp-3">{hotel.description}</p>
-          <ButtonDetail className="ml-4 mt-2" />
+          <ButtonDetail className="ml-4 mt-2" hotel={hotel} />
         </Col>
       </Row>
     </div>

@@ -6,8 +6,8 @@ const PropertyAmenities = ({ amenities }) => {
       {amenities.map((amenity, index) => (
         <Tag
           key={index}
-          color="blue"
-          style={{ fontSize: "1rem", padding: "6px 8px" }}
+          color="purple"
+          className="px-3 py-1 rounded-full text-white font-semibold shadow-md transition-transform hover:scale-105 text-sm"
         >
           {amenity.name}
         </Tag>

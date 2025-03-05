@@ -6,13 +6,13 @@ import "swiper/css/navigation";
 import { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useCitiesOfCountry from "../../hooks/useCitiesOfCountry";
-
+import { useNavigate } from "react-router-dom";
 const VietNamDestination = () => {
   const { data: cities, isLoading, isError } = useCitiesOfCountry("Vietnam");
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const [swiperInstance, setSwiperInstance] = useState(null);
-
+  const navigate = useNavigate();
   // ✅ Kiểm tra cities trước khi sử dụng map()
   const destinations = Array.isArray(cities)
     ? cities.map((city) => ({
@@ -38,7 +38,9 @@ const VietNamDestination = () => {
   if (isLoading) return <p>Đang tải địa điểm...</p>;
   if (isError) return <p>Lỗi khi tải địa điểm.</p>;
   if (!destinations.length) return <p>Không có dữ liệu.</p>; // ✅ Tránh lỗi khi API trả về rỗng
-
+  const handleChoiceCity = (dest) => {
+    navigate(`/search?cityName=${dest.name}`);
+  };
   return (
     <div className="w-full px-6 py-8">
       <div className="max-w-screen-xl mx-auto relative">
@@ -78,7 +80,11 @@ const VietNamDestination = () => {
           onSwiper={setSwiperInstance} // Lưu instance của Swiper vào state
         >
           {destinations.map((dest, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide
+              onClick={() => handleChoiceCity(dest)}
+              key={index}
+              className="cursor-pointer"
+            >
               <div className="relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition duration-300 transform hover:scale-105">
                 <img
                   src={dest.image}

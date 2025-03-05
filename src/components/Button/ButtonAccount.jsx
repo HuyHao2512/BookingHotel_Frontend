@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { Popover, Button, Avatar, List, message } from "antd";
+import * as authService from "../../services/auth.service";
 import {
   UserOutlined,
   LogoutOutlined,
@@ -21,7 +23,7 @@ const menuItems = [
     key: "wishlist",
     label: "Yêu thích",
     icon: <HeartOutlined />,
-    path: "/wishlist",
+    path: "/like",
   },
   {
     key: "change-password",
@@ -34,13 +36,26 @@ const menuItems = [
 
 const ButtonAccount = () => {
   const navigate = useNavigate();
-
-  // Hàm xử lý đăng xuất
+  const logoutMutation = useMutation({
+    mutationFn: (data) => authService.logout(data),
+    onSuccess: () => {
+      message.success("Đăng xuất thành công!");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("email");
+      navigate("/login");
+    },
+    onError: (error) => {
+      message.error("Đăng xuất thất bại!");
+      console.log("Error:", error);
+    },
+  });
   const handleLogout = () => {
-    // Xóa token, localStorage hoặc gọi API logout tại đây
-    localStorage.removeItem("token");
-    message.success("Đăng xuất thành công!");
-    navigate("/login"); // Điều hướng về trang đăng nhập
+    logoutMutation.mutate({
+      refreshToken: localStorage.getItem("refreshToken"),
+    });
+    navigate("/login");
   };
 
   // Hàm xử lý click để chuyển trang hoặc logout

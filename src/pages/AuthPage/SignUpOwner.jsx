@@ -73,9 +73,8 @@ export default function SignUpOwner() {
     formData.append("address", hotelData.address);
     formData.append("description", hotelData.description);
     // Gửi danh sách tiện ích dưới dạng mảng
-    hotelData.amenities.forEach((amenity) => {
-      formData.append("amenities[]", amenity);
-    });
+    const amenitiesString = hotelData.amenities.join(",");
+    formData.append("amenities", amenitiesString);
     fileList.forEach((file) => {
       formData.append("files", file.originFileObj);
     });
@@ -92,6 +91,7 @@ export default function SignUpOwner() {
 
   const handleAmenitiesChange = (checkedValues) => {
     setHotelData({ ...hotelData, amenities: checkedValues });
+    console.log("Checked amenities:", checkedValues);
   };
   const handleCategoryChange = (value) => {
     setHotelData({ ...hotelData, category: value });
@@ -112,19 +112,16 @@ export default function SignUpOwner() {
     mutationFn: (formData) => ownerService.signUpOwner(formData),
     onSuccess: (data) => {
       console.log("Data:", data);
-      message.loading("Đang xử lý, vui lòng chờ...");
       message.success("Đăng ký thành công!");
-      window.location.href = "/login";
     },
     onError: (error) => {
       console.log("Error:", error);
-      message.loading("Đang xử lý, vui lòng chờ...");
       message.error("Đăng ký thất bại!");
     },
   });
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
+    <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-4 mb-4">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
         Đăng ký thông tin khách sạn
       </h2>

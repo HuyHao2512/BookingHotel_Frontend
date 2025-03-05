@@ -1,44 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { DatePicker, Select, Button, Input } from "antd";
 import { SearchOutlined, HomeOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import ButtonLogin from "../Button/ButtonLogin";
 import ButtonAccount from "../Button/ButtonAccount";
+import useCity from "../../hooks/useCity";
+import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 const { RangePicker } = DatePicker;
-const onChange = (value) => {
-  console.log(`selected ${value}`);
-};
-const destinations = [
-  {
-    name: "Hà Nội",
-    image: "images/ha-noi.jpg",
-  },
-  {
-    name: "Hồ Chí Minh",
-    image: "images/ho-chi-minh.jpg",
-  },
-  {
-    name: "Đà Nẵng",
-    image: "images/da-nang.jpg",
-  },
-  {
-    name: "Hội An",
-    image: "images/hoi-an.jpg",
-  },
-  {
-    name: "Nha Trang",
-    image: "images/nha-trang.jpg",
-  },
-  {
-    name: "Đà Lạt",
-    image: "images/da-lat.jpg",
-  },
-];
 const Header = () => {
-  const [isLogin, setIsLogin] = useState(false);
-  const [filteredDestinations, setFilteredDestinations] =
-    useState(destinations);
+  const {
+    data: cityData,
+    isLoading: isCityLoading,
+    isError: isCityError,
+  } = useCity();
+  const destinations = useMemo(() => {
+    if (!Array.isArray(cityData)) return [];
+    return cityData.map((city) => ({
+      name: city.name,
+      image: city.image?.url || "images/fallback-image-url.jpg",
+    }));
+  }, [cityData]);
+  const navigate = useNavigate();
+  const { user, logout } = useContext(AuthContext);
+  const [filteredDestinations, setFilteredDestinations] = useState([]);
+  const [city, setCity] = useState("");
+  const onChange = (value) => {
+    setCity(value);
+  };
+  useEffect(() => {
+    setFilteredDestinations(destinations);
+  }, [destinations]); // Chạy khi `destinations` thay đổi
 
   const handleSearch = (value) => {
     setFilteredDestinations(
@@ -47,16 +40,22 @@ const Header = () => {
       )
     );
   };
-
+  const handleSearchSubmit = (city) => {
+    navigate(`/search?cityName=${city}`);
+  };
   return (
     <header className="bg-blue-900 text-white px-6 py-4">
       {/* Top Navigation */}
       <div className="flex justify-between items-center">
         <Link to="/">
-          <img src="images/logo.png" alt="logo" className="w-32 ml-24" />
+          <img
+            src="https://res.cloudinary.com/dsfajbqyx/image/upload/v1741069874/t27rkfzasuv6jnswqjhl.png"
+            alt="logo"
+            className="w-32 ml-24"
+          />
         </Link>
         <div className="flex space-x-3 mr-24">
-          {isLogin ? (
+          {user ? (
             <ButtonAccount />
           ) : (
             <Link to="/login">
@@ -76,6 +75,7 @@ const Header = () => {
           <HomeOutlined className="mr-2 text-lg text-gray-500" />
           <Select
             showSearch
+            className="w-full border-none focus:ring-0"
             placeholder="Chọn địa điểm"
             onChange={onChange}
             onSearch={handleSearch}
@@ -102,6 +102,7 @@ const Header = () => {
         <Button
           type="primary"
           className="ml-4 flex items-center px-6 rounded-full h-10 w-[120px] justify-center"
+          onClick={() => handleSearchSubmit(city)}
         >
           <SearchOutlined className="mr-1" />
           Tìm
