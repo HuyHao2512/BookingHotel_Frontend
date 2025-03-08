@@ -8,7 +8,7 @@ import LayoutAdmin from "../layouts/LayoutAdmin/LayoutAdmin";
 import PropertyPage from "../pages/PropertyPage/PropertyPage";
 import SearchPage from "../pages/SearchPage/SearchPage";
 import BookingInfo from "../pages/Booking/BookingInfo";
-import BookingConfirm from "../pages/Booking/BookingConfirm";
+import BookingHistory from "../pages/Booking/BookingHistory";
 import ListRoom from "../pages/Owner/ListRoom";
 import Booking from "../pages/Owner/Booking";
 import DashboardAdmin from "../pages/Admin/DashboardAdmin";
@@ -57,9 +57,9 @@ export const routes = [
     isShowHeader: false,
   },
   {
-    path: "/booking-confirm",
-    page: BookingConfirm,
-    isShowHeader: false,
+    path: "/booking-history",
+    page: BookingHistory,
+    isShowHeader: true,
   },
   {
     path: "/like",

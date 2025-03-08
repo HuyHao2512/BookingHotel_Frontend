@@ -1,64 +1,57 @@
-import {
-  Table,
-  Button,
-  Modal,
-  Input,
-  Select,
-  Form,
-  message,
-  Tag,
-  Switch,
-} from "antd";
-import { useState } from "react";
-import { DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { Table, Button, Tag, Switch, message } from "antd";
+import { useState, useEffect } from "react";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import AddRoomModal from "../../components/Modal/AddRoomModal";
 import UpdateRoomModal from "../../components/Modal/UpdateRoomModal";
-const { Option } = Select;
+import useFindByOwner from "../../hooks/useFindByOwner";
+import useListRoomByOwner from "../../hooks/useListRoomByOwner";
+import { updateRoomStatus } from "../../services/owner.service";
 
 const ListRoom = () => {
   const [isAddRoomModalOpen, setIsAddRoomModalOpen] = useState(false);
   const [isUpdateRoomModalOpen, setIsUpdateRoomModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [form] = Form.useForm();
-  const [rooms, setRooms] = useState([
-    {
-      id: 1,
-      name: "Phòng Deluxe",
-      type: "Giường Đôi",
-      price: 500000,
-      status: "Trống",
-    },
-    {
-      id: 2,
-      name: "Phòng Superior",
-      type: "Giường Đơn",
-      price: 350000,
-      status: "Đã đặt",
-    },
-  ]);
+  const { data: ownerData } = useFindByOwner();
+  const { data: rooms } = useListRoomByOwner(ownerData?.data[0]?._id);
+  const [dataSource, setDataSource] = useState([]);
+  useEffect(() => {
+    if (rooms) {
+      setDataSource([...rooms]);
+    }
+  }, [rooms]);
+
   const showModal = () => setIsAddRoomModalOpen(true);
-  const showModalUpdate = (record) => {
-    setSelectedRecord(record); // Lưu dữ liệu của hàng được chọn
-    setIsUpdateRoomModalOpen(true);
-  };
-  // Xử lý khi nhấn OK trong modal
-  const handleOk = () => {
-    form.validateFields().then((values) => {
-      setRooms([...rooms, { id: rooms.length + 1, ...values }]);
-      form.resetFields();
-      setIsAddRoomModalOpen(false);
-      message.success("Thêm phòng thành công!");
-    });
-  };
-  const handleOkUpdate = () => {
-    console.log("OK");
-    setSelectedRecord(null);
-  };
+  const handleOkUpdate = () => setSelectedRecord(null);
   const handleCancel = () => setIsAddRoomModalOpen(false);
   const handleCancelUpdate = () => setIsUpdateRoomModalOpen(false);
-  const onChange = (checked) => {
-    console.log(`switch to ${checked}`);
+
+  const handleUpdate = (record) => {
+    setSelectedRecord(record);
+    setIsUpdateRoomModalOpen(true);
   };
+
+  const handleToggleAvailability = async (roomId, newStatus) => {
+    setDataSource((prev) =>
+      prev.map((room) =>
+        room._id === roomId ? { ...room, isAvailable: newStatus } : room
+      )
+    );
+
+    try {
+      await updateRoomStatus(roomId, { isAvailable: newStatus });
+      message.destroy();
+      message.success(`Phòng đã được ${newStatus ? "hiển thị" : "ẩn"}`);
+    } catch (error) {
+      message.destroy();
+      message.error("Cập nhật trạng thái thất bại!");
+      setDataSource((prev) =>
+        prev.map((room) =>
+          room._id === roomId ? { ...room, isAvailable: !newStatus } : room
+        )
+      );
+    }
+  };
+
   const columns = [
     { title: "Tên phòng", dataIndex: "name", key: "name" },
     {
@@ -69,30 +62,35 @@ const ListRoom = () => {
     },
     {
       title: "Trạng thái",
-      dataIndex: "status",
+      dataIndex: "quantity",
       key: "status",
-      render: (status) => (
-        <Tag color={status === "Trống" ? "green" : "red"}>{status}</Tag>
+      render: (quantity) => (
+        <Tag color={quantity > 0 ? "green" : "red"}>
+          {quantity > 0 ? "Còn phòng" : "Hết phòng"}
+        </Tag>
       ),
     },
     {
       title: "Chỉnh sửa",
       key: "action",
       render: (_, record) => (
-        <div>
-          <Button
-            onClick={() => showModalUpdate(record)}
-            className="bg-orange-500 text-white"
-          >
-            <InfoCircleOutlined />
-          </Button>
-        </div>
+        <Button
+          onClick={() => handleUpdate(record)}
+          className="bg-orange-500 text-white"
+        >
+          <InfoCircleOutlined />
+        </Button>
       ),
     },
     {
       title: "Ẩn tạm thời",
       key: "disable",
-      render: (_, record) => <Switch defaultChecked onChange={onChange} />,
+      render: (_, record) => (
+        <Switch
+          checked={!!record.isAvailable}
+          onChange={(checked) => handleToggleAvailability(record._id, checked)}
+        />
+      ),
     },
   ];
 
@@ -104,17 +102,17 @@ const ListRoom = () => {
         + Thêm Phòng
       </Button>
 
-      <Table columns={columns} dataSource={rooms} rowKey="id" />
+      <Table columns={columns} dataSource={dataSource} rowKey="_id" />
 
       <AddRoomModal
         isAddRoomModalOpen={isAddRoomModalOpen}
-        handleOk={handleOk}
         handleCancel={handleCancel}
       />
       <UpdateRoomModal
         isUpdateRoomModalOpen={isUpdateRoomModalOpen}
         handleOk={handleOkUpdate}
         handleCancel={handleCancelUpdate}
+        room={selectedRecord}
       />
     </div>
   );

@@ -1,141 +1,276 @@
-import React from "react";
-import { Modal, Form, Input, Select, Upload, Button } from "antd";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  Upload,
+  Button,
+  Spin,
+  Checkbox,
+  message,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleOk, handleCancel }) => {
-  const [form] = Form.useForm();
-  const props = {
-    name: "file",
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
-  const [selectedAmeneties, setSelectedAmenities] = useState([]);
+import useTypeRoom from "../../hooks/useTypeRoom";
+import useConveniences from "../../hooks/useConveniences";
+import useFindByOwner from "../../hooks/useFindByOwner";
+import * as ownerService from "../../services/owner.service";
 
-  const handleChange = (values) => {
-    setSelectedAmenities(values);
+const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
+  const [form] = Form.useForm();
+  const [fileList, setFileList] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    data: typeRoomData,
+    isLoading: isLoadingTypeRoom,
+    isError: isErrorTypeRoom,
+  } = useTypeRoom();
+  const {
+    data: conveniencesData,
+    isLoading: isLoadingConveniences,
+    isError: isErrorConveniences,
+  } = useConveniences();
+  const {
+    data: ownerData,
+    isLoading: isLoadingOwner,
+    isError: isErrorOwner,
+  } = useFindByOwner();
+  const [propertyId, setPropertyId] = useState(null);
+  const [roomData, setRoomData] = useState({
+    name: "",
+    typeroom: "",
+    property: null,
+    conveniences: [],
+    price: "",
+    isAvailable: true,
+    quantity: "",
+    area: "",
+    capacity: "",
+    bed: "",
+    direction: "",
+    totalRoom: "",
+    files: [],
+  });
+  useEffect(() => {
+    if (ownerData && ownerData.data && ownerData.data.length > 0) {
+      setPropertyId(ownerData.data[0]._id);
+      setRoomData((prev) => ({
+        ...prev,
+        property: ownerData.data[0]._id,
+      }));
+    }
+  }, [ownerData]);
+  useEffect(() => {
+    if (room) {
+      setRoomData({
+        name: room.name || "",
+        typeroom: room.typeroom || "",
+        conveniences: room.conveniences || [],
+        price: room.price || "",
+        isAvailable: room.isAvailable || true,
+        quantity: room.quantity || "",
+        area: room.area || "",
+        capacity: room.capacity || "",
+        bed: room.bed || "",
+        direction: room.direction || "",
+        totalRoom: room.totalRoom || "",
+        files: room.files || [],
+      });
+
+      form.setFieldsValue({
+        name: room.name,
+        typeroom: room.typeroom,
+        price: room.price,
+        quantity: room.quantity,
+        area: room.area,
+        capacity: room.capacity,
+        bed: room.bed,
+        direction: room.direction,
+        conveniences: room.conveniences,
+      });
+
+      if (room.files) {
+        setFileList(
+          room.files.map((file, index) => ({
+            uid: index,
+            name: `image-${index}`,
+            url: file, // Đường dẫn ảnh đã có
+          }))
+        );
+      }
+    }
+  }, [room, form]);
+
+  const updateRoomMutation = useMutation({
+    mutationFn: (formData) => ownerService.updateRoom(room._id, formData),
+    onSuccess: () => {
+      message.success("Cập nhật phòng thành công!");
+      handleCancel();
+    },
+    onError: (error) => {
+      console.error("Lỗi khi cập nhật phòng:", error);
+      message.error("Có lỗi xảy ra khi cập nhật phòng!");
+    },
+  });
+
+  const handleChange = (e) => {
+    setRoomData({ ...roomData, [e.target.name]: e.target.value });
   };
+
+  const handleImageUpload = ({ fileList }) => {
+    setFileList(fileList);
+  };
+
+  const handleSubmit = () => {
+    if (
+      !roomData.name ||
+      !roomData.typeroom ||
+      !roomData.price ||
+      !roomData.quantity ||
+      !roomData.area ||
+      !roomData.capacity ||
+      !roomData.bed ||
+      !roomData.direction ||
+      !roomData.files
+    ) {
+      message.error("Vui lòng điền đầy đủ thông tin bắt buộc.");
+      return;
+    }
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("name", roomData.name);
+    formData.append("typeroom", roomData.typeroom);
+    formData.append("price", roomData.price);
+    formData.append("quantity", roomData.quantity);
+    formData.append("property", roomData.property);
+    formData.append("isAvailable", roomData.isAvailable);
+    formData.append("totalRoom", roomData.totalRoom);
+    formData.append("area", roomData.area);
+    formData.append("capacity", roomData.capacity);
+    formData.append("bed", roomData.bed);
+    formData.append("direction", roomData.direction);
+    const conveniencesString = roomData.conveniences.join(",");
+    formData.append("conveniences", conveniencesString);
+
+    fileList.forEach((file) => {
+      if (file.originFileObj) {
+        formData.append("files", file.originFileObj);
+      }
+    });
+    console.log("Dữ liệu gửi đi:", Object.fromEntries(formData.entries()));
+    updateRoomMutation.mutate(formData, {
+      onSettled: () => setIsSubmitting(false),
+    });
+  };
+
   return (
-    <div>
-      <Modal
-        title="Chỉnh Sửa Thông Tin Phòng"
-        open={isUpdateRoomModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+    <Modal
+      title="Cập Nhật Phòng"
+      open={isUpdateRoomModalOpen}
+      onOk={() => form.submit()}
+      onCancel={handleCancel}
+      width={800}
+      confirmLoading={isSubmitting}
+    >
+      <Form
+        form={form}
+        layout="horizontal"
+        onFinish={handleSubmit}
+        autoComplete="off"
       >
-        <Form form={form} layout="horizontal">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Form.Item
-            name="name"
             label="Tên Phòng"
+            name="name"
             rules={[{ required: true, message: "Nhập tên phòng!" }]}
           >
-            <Input />
+            <Input name="name" onChange={handleChange} />
           </Form.Item>
 
           <Form.Item
-            name="type"
             label="Loại Phòng"
+            name="typeroom"
             rules={[{ required: true, message: "Chọn loại phòng!" }]}
           >
-            <Select>
-              <Option value="Giường Đôi">Giường Đôi</Option>
-              <Option value="Giường Đơn">Giường Đơn</Option>
+            <Select
+              placeholder="Chọn loại phòng"
+              onChange={(value) =>
+                setRoomData({ ...roomData, typeroom: value })
+              }
+            >
+              {isLoadingTypeRoom ? (
+                <Select.Option disabled>Đang tải...</Select.Option>
+              ) : (
+                typeRoomData?.map((type) => (
+                  <Select.Option key={type._id} value={type._id}>
+                    {type.name}
+                  </Select.Option>
+                ))
+              )}
             </Select>
           </Form.Item>
 
           <Form.Item
-            name="price"
             label="Giá (VND)"
+            name="price"
             rules={[{ required: true, message: "Nhập giá phòng!" }]}
           >
-            <Input type="number" />
+            <Input type="number" name="price" onChange={handleChange} />
           </Form.Item>
 
           <Form.Item
-            name="quantity"
             label="Số Lượng"
-            rules={[{ required: true, message: "Chọn trạng thái!" }]}
+            name="quantity"
+            rules={[{ required: true, message: "Nhập số lượng!" }]}
           >
-            <Input type="number" />
+            <Input type="number" name="quantity" onChange={handleChange} />
           </Form.Item>
-          <Form.Item
-            name="amenities"
-            label="Tiện ích"
-            rules={[{ required: true, message: "Chọn tiện ích!" }]}
+        </div>
+
+        <Form.Item label="Tiện ích" name="conveniences">
+          {isLoadingConveniences ? (
+            <Spin />
+          ) : (
+            <Checkbox.Group
+              onChange={(values) =>
+                setRoomData({ ...roomData, conveniences: values })
+              }
+            >
+              <div className="grid grid-cols-2 gap-2">
+                {conveniencesData?.map((item) => (
+                  <Checkbox key={item._id} value={item._id}>
+                    {item.name}
+                  </Checkbox>
+                ))}
+              </div>
+            </Checkbox.Group>
+          )}
+        </Form.Item>
+
+        <Form.Item label="Hướng" name="direction">
+          <Select
+            onChange={(value) => setRoomData({ ...roomData, direction: value })}
           >
-            <Select
-              mode="multiple"
-              placeholder="Chọn nhiều tùy chọn"
-              value={selectedAmeneties}
-              onChange={handleChange}
-              className="w-full"
-              options={[
-                { value: "option1", label: "Tùy chọn 1" },
-                { value: "option2", label: "Tùy chọn 2" },
-                { value: "option3", label: "Tùy chọn 3" },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            name="area"
-            label="Diện Tích"
-            rules={[{ required: true, message: "Nhập diện tích!" }]}
+            <Select.Option value="Đông">Đông</Select.Option>
+            <Select.Option value="Tây">Tây</Select.Option>
+            <Select.Option value="Nam">Nam</Select.Option>
+            <Select.Option value="Bắc">Bắc</Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="Hình Ảnh">
+          <Upload
+            beforeUpload={() => false}
+            multiple
+            onChange={handleImageUpload}
+            fileList={fileList}
           >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="capacity"
-            label="Số Người"
-            rules={[{ required: true, message: "Nhập số người!" }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="bed"
-            label="Giường"
-            rules={[{ required: true, message: "Nhập số giường!" }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="direction"
-            label="Hướng"
-            rules={[{ required: true, message: "Nhập hướng!" }]}
-          >
-            <Select>
-              <Option value="Đông">Đông</Option>
-              <Option value="Tây">Tây</Option>
-              <Option value="Nam">Nam</Option>
-              <Option value="Bắc">Bắc</Option>
-              <Option value="Đông Nam">Đông Nam</Option>
-              <Option value="Đông Bắc">Đông Bắc</Option>
-              <Option value="Tây Nam">Tây Nam</Option>
-              <Option value="Tây Bắc">Tây Bắc</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="image"
-            label="Hình Ảnh"
-            rules={[{ required: true, message: "Chọn hình ảnh!" }]}
-          >
-            <Upload {...props}>
-              <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>
-            </Upload>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+            <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>
+          </Upload>
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };
 

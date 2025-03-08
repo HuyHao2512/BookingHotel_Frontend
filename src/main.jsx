@@ -6,6 +6,7 @@ import "antd/dist/reset.css";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { BookingProvider } from "./contexts/BookingContext.jsx";
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -14,7 +15,9 @@ createRoot(document.getElementById("root")).render(
         future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
       >
         <AuthProvider>
-          <App />
+          <BookingProvider>
+            <App />
+          </BookingProvider>
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>

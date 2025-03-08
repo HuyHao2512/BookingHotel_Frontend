@@ -11,7 +11,6 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import * as userService from "../../services/user.service";
 import * as ownerService from "../../services/owner.service";
 import useAmenities from "../../hooks/useAmenities";
 import useCity from "../../hooks/useCity";

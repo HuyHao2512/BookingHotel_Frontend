@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useBooking } from "../../contexts/BookingContext"; // Import context
 import StepsComponent from "../../components/Booking/StepsComponent";
 import BookingDetails from "../../components/Booking/BookingDetails";
 import InfoProperties from "../../components/Booking/InfoProperties";
@@ -8,11 +9,16 @@ import { Row, Col, Button, Alert, message, Modal } from "antd";
 import Summary from "../../components/Booking/Summary";
 import { Footer } from "antd/es/layout/layout";
 import { useNavigate } from "react-router-dom";
-
+import * as userServices from "../../services/user.service";
+import { useMutation } from "@tanstack/react-query";
 function BookingInfo() {
+  const [isValid, setIsValid] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
+
+  const { booking } = useBooking(); // Lấy dữ liệu đặt phòng từ context
+  console.log("Thông tin đặt phòng:", booking);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -20,19 +26,38 @@ function BookingInfo() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const handleValidation = (valid) => {
+    setIsValid(valid);
+  };
   const nextStep = () => {
-    setCurrentStep(2); // Cập nhật bước thành 2
+    if (!isValid) {
+      message.error("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+    setCurrentStep(2);
   };
+
   const preStep = () => {
-    setCurrentStep(1); // Cập nhật bước thành 1
+    setCurrentStep(1);
   };
-  const navigateToHome = () => {
-    navigate(-1);
-  };
+
+  const bookingMutation = useMutation({
+    mutationFn: (booking) => userServices.bookingRoom(booking),
+    onSuccess: (data) => {
+      console.log("Đặt phòng thành công", data);
+      message.success("Đặt phòng thành công, vui lòng kiểm tra email của bạn!");
+      window.location.href = "/";
+    },
+    onError: (error) => {
+      console.log("Đặt phòng thất bại", error);
+      message.error("Đặt phòng thất bại, vui lòng thử lại sau!");
+    },
+  });
+
   const handleConfirm = () => {
-    console.log("Confirm");
-    message.success("Đặt phòng thành công, vui lòng kiểm tra email của bạn!");
+    bookingMutation.mutate(booking); // Truyền dữ liệu booking vào đây
   };
+
   return (
     <div>
       <div className="w-full px-6 pd-8">
@@ -48,28 +73,21 @@ function BookingInfo() {
               <Row className="mt-8">
                 <Col span={6}>
                   <InfoProperties
-                    name="Madella Hotel"
-                    location="48 Ngo Quyen, Cần Thơ, Việt Nam"
+                    propertyName={booking.propertyName}
+                    address={booking.propertyAddress}
                   />
                   <BookingDetails
-                    checkIn="Thứ 6, 14 tháng 3, 2025 từ 14:00"
-                    checkOut="Thứ 7, 15 tháng 3, 2025 đến 12:00"
-                    roomType="Phòng Superior Giường Đôi"
-                    price="425.541"
+                    checkIn={booking.checkIn || "Chưa chọn ngày"}
+                    checkOut={booking.checkOut || "Chưa chọn ngày"}
                   />
                   <Tips />
-                </Col>{" "}
+                </Col>
                 {currentStep === 1 && (
                   <Col span={18}>
-                    <InfoBooking />
-                    <Summary />
+                    <InfoBooking onValidate={handleValidation} />
+                    <Summary booking={booking} />
                     <div className="mt-8 flex justify-end">
-                      <Button
-                        className="mr-4"
-                        color="purple"
-                        variant="filled"
-                        onClick={() => navigate(-1)}
-                      >
+                      <Button className="mr-4" onClick={() => navigate(-1)}>
                         Quay lại
                       </Button>
                       <Button type="primary" onClick={nextStep}>
@@ -80,66 +98,79 @@ function BookingInfo() {
                 )}
                 {currentStep === 2 && (
                   <Col span={18}>
-                    <div className="border p-4 w-full border-blue-20 border-blue-200">
+                    <div className="border p-4 w-full border-blue-200">
                       <h1 className="text-lg">XÁC NHẬN ĐẶT PHÒNG</h1>
                       <p className="text-gray-500">
                         Vui lòng kiểm tra thông tin đặt phòng của bạn trước khi
                         xác nhận.
                       </p>
                       <div>
-                        <div className="mb-3 flex items-center">
+                        <div className="mb-3">
                           <p>
                             <span className="font-bold">Tên khách hàng:</span>
-                            &nbsp; Nguyễn Văn A
+                            &nbsp; {booking.name || "Chưa nhập"}
                           </p>
                         </div>
-                        <div className="mb-3 flex items-center">
+                        <div className="mb-3">
                           <p>
                             <span className="font-bold">Nơi lưu trú:</span>
-                            &nbsp; Khách sạn ABC
+                            &nbsp; {booking.propertyName || "Chưa chọn"}
                           </p>
                         </div>
-                        <div className="mb-3 flex items-center">
+                        <div className="mb-3">
+                          <p>
+                            <span className="font-bold">Địa chỉ:</span>
+                            &nbsp; {booking.propertyAddress || "Chưa chọn"}
+                          </p>
+                        </div>
+                        <div className="mb-3">
                           <p>
                             <span className="font-bold">Email khách hàng:</span>
-                            &nbsp; abc@gmail.com
+                            &nbsp; {booking.email || "Chưa nhập"}
                           </p>
                         </div>
-                        <div className="mb-3 flex items-center">
+                        <div className="mb-3">
                           <p>
                             <span className="font-bold">Số điện thoại:</span>
-                            &nbsp; 0125487456
+                            &nbsp; {booking.phone || "Chưa nhập"}
                           </p>
                         </div>
                         <h3 className="text-xl">Thông tin phòng đã đặt</h3>
                         <div className="mb-4 mt-2 text-blue-500 text-md">
-                          <p>
-                            <span>1 phòng đơn tiêu chuẩn</span>
-                          </p>
-                          <p>
-                            <span>2 phòng đơn tiêu chuẩn</span>
-                          </p>
+                          {booking.rooms.length > 0 ? (
+                            booking.rooms.map((room, index) => (
+                              <p key={index} className="text-lg">
+                                {room.quantity} phòng {room.name}
+                              </p>
+                            ))
+                          ) : (
+                            <p>Chưa chọn phòng</p>
+                          )}
                         </div>
                         <h3 className="text-xl">Thời gian lưu trú</h3>
                         <div className="mb-4 mt-2 text-blue-500 text-md">
-                          <p>
-                            <span>Thứ 6, 14 tháng 3, 2025 từ 14:00</span>
-                          </p>
-                          <p>
-                            <span>Thứ 7, 15 tháng 3, 2025 đến 12:00</span>
+                          <p className="text-lg">
+                            Từ 14:00 {booking.checkIn || "Chưa chọn ngày"} đến
+                            12:00 {booking.checkOut || "Chưa chọn ngày"}
                           </p>
                         </div>
                         <h3 className="text-xl">Tổng cộng</h3>
                         <p>
                           Phương thức thanh toán:&nbsp;
                           <span className="font-bold">
-                            Thanh toán khi nhận phòng
+                            {booking.paymentMethod === 1
+                              ? "Thanh toán khi nhận phòng"
+                              : "Thanh toán online"}
                           </span>
                         </p>
-                        <div className="mb-4 mt-2 text-blue-900 text-md">
+                        <div className="mb-4 mt-2 text-blue-900 text-md text-lg">
                           <p>
                             Tổng tiền cần thanh toán: &nbsp;
-                            <span>425.541 VND</span>
+                            <span className="font-bold">
+                              {new Intl.NumberFormat("vi-VN").format(
+                                booking.finalPrice
+                              )}
+                            </span>
                           </p>
                         </div>
                       </div>
@@ -155,12 +186,7 @@ function BookingInfo() {
                       từ phía chúng tôi.
                     </p>
                     <div className="mt-8 flex justify-end">
-                      <Button
-                        className="mr-4"
-                        color="purple"
-                        variant="filled"
-                        onClick={preStep}
-                      >
+                      <Button className="mr-4" onClick={preStep}>
                         Quay lại
                       </Button>
                       <Button type="primary" onClick={handleConfirm}>

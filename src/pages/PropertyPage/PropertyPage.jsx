@@ -9,15 +9,47 @@ import Review from "../../components/Property/Review";
 import MapComponent from "../../components/Map/MapComponent";
 import { useParams } from "react-router-dom";
 import useGetPropertyById from "../../hooks/useGetPropertyById";
+import useRoomByProperty from "../../hooks/useRoomByProperty";
+import { useBooking } from "../../contexts/BookingContext";
 const PropertyPage = () => {
   const { id } = useParams();
-  const { data: propertiesData, isLoading, isError } = useGetPropertyById(id);
-  const property = propertiesData;
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+  const { updateBooking } = useBooking();
+  const { data: propertiesData, isLoading, isError } = useGetPropertyById(id);
+  const {
+    data: rooms = [],
+    isLoading: isRoomsLoading,
+    isError: isRoomsError,
+  } = useRoomByProperty(id);
+  const [propertyName, setPropertyName] = useState("");
+  const [propertyAddress, setPropertyAddress] = useState("");
+  useEffect(() => {
+    if (propertiesData) {
+      setPropertyName(propertiesData.name);
+      setPropertyAddress(propertiesData.address);
+    }
+  }, [propertiesData]);
+
+  useEffect(() => {
+    updateBooking({
+      property: id,
+      propertyName: propertyName,
+      propertyAddress: propertyAddress,
+    });
+  }, [propertyName, propertyAddress]);
+
+  useEffect(() => {
+    if (rooms) {
+      setDataSource(rooms);
+    }
+  }, [rooms]);
+  if (isLoading || isRoomsLoading) return <h1>Đang tải...</h1>;
+  if (isError || isRoomsError) return <h1>Đã xảy ra lỗi</h1>;
+  const property = propertiesData;
+
   const handleShowAllImages = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
-  if (isLoading) return <h1>Đang tải...</h1>;
-  if (isError) return <h1>Đã xảy ra lỗi</h1>;
   return (
     <div className="w-full px-6 mt-6 py-8">
       <div className="max-w-screen-xl mx-auto relative">
@@ -105,9 +137,9 @@ const PropertyPage = () => {
             </Col>
           </Row>
         </div>
-        {/* <div id="part-3" className="w-full h-full mt-4">
+        <div id="part-3" className="w-full h-full mt-4">
           <AvailableRooms dataSource={rooms} />
-        </div> */}
+        </div>
         <div id="part-4" className="w-full h-full mt-16">
           <h1 className="text-2xl font-bold mb-4">Đánh giá của khách</h1>
           <Review />
@@ -116,7 +148,7 @@ const PropertyPage = () => {
       <ImageModal
         isVisible={isModalVisible}
         handleClose={handleCloseModal}
-        images={property.images.map((img) => img.url)}
+        images={(property.images || []).map((img) => img.url)}
       />
     </div>
   );

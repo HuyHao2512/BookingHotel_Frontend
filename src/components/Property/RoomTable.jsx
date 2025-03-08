@@ -13,7 +13,7 @@ const RoomTable = ({ rooms, handleQuantityChange, showRoomInfo }) => {
       ),
     },
     {
-      title: "Chọn Số Lượng",
+      title: "Số Lượng",
       key: "selectedQuantity",
       render: (text, record) => (
         <InputNumber
@@ -33,7 +33,6 @@ const RoomTable = ({ rooms, handleQuantityChange, showRoomInfo }) => {
         columns={columns}
         pagination={{ pageSize: 2 }}
       />
-      <Button type="primary">Đặt phòng</Button>
     </div>
   );
 };

@@ -31,8 +31,7 @@ export const getAllProperties = async () => {
 };
 
 export const getOneProperty = async (id) => {
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZ21haWwuY29tIiwiX2lkIjoiNjdiMzYwODY5MjcwNTk4ODkwYjMzYjQ2Iiwicm9sZXMiOlsidXNlciJdLCJpYXQiOjE3NDA5OTYyODAsImV4cCI6MjAwMDE5NjI4MH0.o3wYPaGPufgDsFSXvGMvy_a-tBDLBs0z-AQwAjS5lvA";
+  const token = localStorage.getItem("accessToken");
   const res = await axios.get(`${URL}/property/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -55,6 +54,27 @@ export const getFilteredProperties = async (
       amenities,
       categoryId,
       minRate,
+    },
+  });
+  return res;
+};
+
+export const bookingRoom = async (data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.post(`${URL}/booking`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return res;
+};
+
+export const getAvailableRooms = async (id, checkIn, checkOut) => {
+  const res = await instance.get(`/rooms/available-property/${id}`, {
+    params: {
+      checkIn,
+      checkOut,
     },
   });
   return res;
