@@ -1,17 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd"; // Import message từ Ant Design
-
+import { AuthContext } from "../../contexts/AuthContext";
 const ButtonDetail = ({ hotel }) => {
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleViewDetail = () => {
-    if (!hotel || !hotel._id) {
-      message.error("Lỗi: Không tìm thấy thông tin khách sạn!");
-      return;
-    }
+    if (user) {
+      if (!hotel || !hotel._id) {
+        message.destroy();
+        message.error("Lỗi: Không tìm thấy thông tin khách sạn!");
+        return;
+      }
 
-    navigate(`/property/${hotel._id}`);
+      navigate(`/property/${hotel._id}`);
+    } else {
+      message.destroy();
+      message.error("Vui lòng đăng nhập để xem chi tiết");
+    }
   };
 
   return (

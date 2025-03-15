@@ -7,15 +7,8 @@ import {
   PicLeftOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme, Col, Row } from "antd";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-  Outlet,
-} from "react-router-dom";
+import { Button, Layout, Menu, theme } from "antd";
+import { BrowserRouter as Router, useNavigate, Outlet } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 function LayoutAdmin() {

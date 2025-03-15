@@ -6,6 +6,7 @@ import "swiper/css/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Import icon
 import PropertyCard from "./PropertyCard";
 import useProperties from "../../hooks/useProperties";
+
 function PropertyList() {
   const { data: hotelsData, isLoading, isError } = useProperties();
   const prevRef = useRef(null);

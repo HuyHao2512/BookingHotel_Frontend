@@ -8,7 +8,8 @@ import {
   FaEye,
 } from "react-icons/fa";
 import BookingDetailModal from "../../components/Modal/BookingDetailModal"; // Import component modal
-
+import useBookingByUser from "../../hooks/useBookingByUser";
+import { useParams } from "react-router-dom";
 const BookingHistory = () => {
   const rawData = [
     {
@@ -60,8 +61,14 @@ const BookingHistory = () => {
       email: "huyhao2512@gmail.com",
     },
   ];
-
-  // 🔹 Trạng thái quản lý
+  const { id } = useParams();
+  // const {
+  //   data: rawData,
+  //   isloading: isRawDataLoading,
+  //   isError: isRawDataError,
+  // } = useBookingByUser(id);
+  // if (isRawDataLoading) return <h1>Đang tải...</h1>;
+  // if (isRawDataError) return <h1>Đã xảy ra lỗi</h1>;
   const [visibleBookings, setVisibleBookings] = React.useState(2);
   const [loading, setLoading] = React.useState(false);
   const [isModalVisible, setIsModalVisible] = React.useState(false);

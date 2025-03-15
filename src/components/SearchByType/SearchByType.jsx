@@ -8,7 +8,6 @@ import {
   FaHouseUser,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-// Hàm xáo trộn mảng (Fisher-Yates Shuffle)
 const shuffleArray = (array) => {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -51,7 +50,7 @@ export default function SearchByType({ types, onSelect }) {
     <div className="w-full px-6 py-8">
       <div className="max-w-screen-xl mx-auto relative">
         <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
-          🔍 Tìm kiếm theo loại chỗ ở
+          Tìm kiếm theo loại chỗ ở
         </h2>
         <div className="grid grid-cols-3 gap-6">
           {types.map((type) => {

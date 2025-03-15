@@ -1,15 +1,19 @@
-import React from "react";
-import { Card, Tag, Typography, Button, Rate, message } from "antd";
-import { EnvironmentOutlined, ExpandOutlined } from "@ant-design/icons";
+import React, { useContext } from "react";
+import { Card, Tag, Typography, Rate, message } from "antd";
+import { EnvironmentOutlined } from "@ant-design/icons";
 import ButtonLike from "../Button/ButtonLike";
-import useGetPropertyById from "../../hooks/useGetPropertyById";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 const { Title, Text } = Typography;
 function PropertyCard({ hotel }) {
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleViewDetail = (hotel) => {
-    navigate(`/property/${hotel._id}`);
-    console.log(hotel);
+    if (user) {
+      navigate(`/property/${hotel._id}`);
+    } else {
+      message.error("Vui lòng đăng nhập để xem chi tiết");
+    }
   };
 
   return (
@@ -37,11 +41,10 @@ function PropertyCard({ hotel }) {
             <button
               className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md"
               onClick={(event) => {
-                event.stopPropagation(); // Ngăn chặn sự kiện lan truyền lên button cha
-                handleLike(hotel); // Gọi hàm xử lý khi bấm like
+                event.stopPropagation();
               }}
             >
-              <ButtonLike />
+              <ButtonLike propertyId={hotel._id} />
             </button>
 
             <div className="flex justify-center items-center">

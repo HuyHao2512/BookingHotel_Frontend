@@ -1,47 +1,59 @@
 import { Table, Button, Modal, Tag } from "antd";
 import { useState } from "react";
-const sampleBookings = [
-  {
-    id: "B001",
-    customer: "Nguyễn Văn A",
-    checkIn: "2025-03-10",
-    checkOut: "2025-03-12",
-    roomType: "Phòng Deluxe",
-    price: 1200000,
-    status: "pending", // pending, confirmed, cancelled, completed
-  },
-  {
-    id: "B002",
-    customer: "Trần Thị B",
-    checkIn: "2025-03-15",
-    checkOut: "2025-03-17",
-    roomType: "Phòng Superior",
-    price: 900000,
-    status: "confirmed",
-  },
-  {
-    id: "B003",
-    customer: "Lê Hoàng C",
-    checkIn: "2025-04-01",
-    checkOut: "2025-04-05",
-    roomType: "Phòng Standard",
-    price: 700000,
-    status: "cancelled",
-  },
-  {
-    id: "B004",
-    customer: "Phạm Minh D",
-    checkIn: "2025-04-10",
-    checkOut: "2025-04-12",
-    roomType: "Phòng Suite",
-    price: 1500000,
-    status: "completed",
-  },
-];
+import { useMutation } from "@tanstack/react-query";
+import useFindByOwner from "../../hooks/useFindByOwner";
+import useBookingByProperty from "../../hooks/useBookingByProperty";
+import * as ownerService from "../../services/owner.service"; // Giả sử có service để gọi API
+import { message } from "antd";
+
 const Booking = () => {
-  const bookings = sampleBookings;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const {
+    data: ownerData,
+    isLoading: isLoadingOwner,
+    isError: isErrorOwner,
+  } = useFindByOwner();
+  const {
+    data: bookingsData,
+    isLoading,
+    isError,
+    refetch, // Thêm refetch để cập nhật dữ liệu sau khi thay đổi trạng thái
+  } = useBookingByProperty(ownerData?.data[0]?._id);
+  // Hàm định dạng ngày giờ
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "N/A";
+    const date = new Date(isoDate);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }); // Ví dụ: "09/03/2025"
+  };
+
+  // Mutation để xác nhận booking
+  const confirmMutation = useMutation({
+    mutationFn: (id) => ownerService.updateBookingStatus(id, "confirmed"),
+    onSuccess: () => {
+      message.success("Đã xác nhận đơn đặt phòng!");
+      refetch(); // Cập nhật lại danh sách bookings
+    },
+    onError: (error) => {
+      message.error("Có lỗi khi xác nhận: " + error.message);
+    },
+  });
+
+  // Mutation để hủy booking
+  const cancelMutation = useMutation({
+    mutationFn: (id) => ownerService.updateBookingStatus(id, "cancelled"),
+    onSuccess: () => {
+      message.success("Đã hủy đơn đặt phòng!");
+      refetch(); // Cập nhật lại danh sách bookings
+    },
+    onError: (error) => {
+      message.error("Có lỗi khi hủy: " + error.message);
+    },
+  });
 
   const showModal = (record) => {
     setSelectedBooking(record);
@@ -54,19 +66,46 @@ const Booking = () => {
   };
 
   const handleConfirm = (id) => {
-    console.log("Xác nhận đơn hàng", id);
+    confirmMutation.mutate(id, "confirmed");
   };
 
   const handleCancelBooking = (id) => {
-    console.log("Hủy đơn hàng", id);
+    cancelMutation.mutate(id, "cancelled");
   };
 
+  if (isLoading || isLoadingOwner) return <p>Loading...</p>;
+  if (isError || isErrorOwner) return <p>Có lỗi xảy ra</p>;
+
   const columns = [
-    { title: "Khách hàng", dataIndex: "customer", key: "customer" },
-    { title: "Nhận phòng", dataIndex: "checkIn", key: "checkIn" },
-    { title: "Trả phòng", dataIndex: "checkOut", key: "checkOut" },
-    { title: "Loại phòng", dataIndex: "roomType", key: "roomType" },
-    { title: "Tổng tiền", dataIndex: "totalPrice", key: "totalPrice" },
+    {
+      title: "Khách hàng",
+      dataIndex: "name", // Đảm bảo key khớp với dữ liệu từ API
+      key: "name",
+    },
+    {
+      title: "Nhận phòng",
+      dataIndex: "checkIn",
+      key: "checkIn",
+      render: (checkIn) => formatDate(checkIn), // Định dạng ngày giờ
+    },
+    {
+      title: "Trả phòng",
+      dataIndex: "checkOut",
+      key: "checkOut",
+      render: (checkOut) => formatDate(checkOut), // Định dạng ngày giờ
+    },
+    {
+      title: "Tổng tiền",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      render: (price) => `${price.toLocaleString("vi-VN")} VND`, // Định dạng tiền tệ
+    },
+    {
+      title: "Thanh toán",
+      dataIndex: "isPaid",
+      key: "isPaid",
+      render: (isPaid) => (isPaid ? "Đã thanh toán" : "Chưa thanh toán"),
+    },
     {
       title: "Trạng thái",
       dataIndex: "status",
@@ -78,6 +117,8 @@ const Booking = () => {
               ? "orange"
               : status === "confirmed"
               ? "green"
+              : status === "completed"
+              ? "blue"
               : "red"
           }
         >
@@ -85,6 +126,8 @@ const Booking = () => {
             ? "Chờ xác nhận"
             : status === "confirmed"
             ? "Đã xác nhận"
+            : status === "completed"
+            ? "Hoàn thành"
             : "Đã hủy"}
         </Tag>
       ),
@@ -96,12 +139,20 @@ const Booking = () => {
         <div className="space-x-2">
           <Button onClick={() => showModal(record)}>Xem</Button>
           {record.status === "pending" && (
-            <Button onClick={() => handleConfirm(record.id)} type="primary">
+            <Button
+              onClick={() => handleConfirm(record._id)} // Sử dụng _id thay vì id nếu API dùng _id
+              type="primary"
+              loading={confirmMutation.isLoading}
+            >
               Xác nhận
             </Button>
           )}
-          {record.status !== "canceled" && (
-            <Button onClick={() => handleCancelBooking(record.id)} danger>
+          {record.status !== "cancelled" && record.status !== "completed" && (
+            <Button
+              onClick={() => handleCancelBooking(record._id)}
+              danger
+              loading={cancelMutation.isLoading}
+            >
               Hủy
             </Button>
           )}
@@ -113,9 +164,8 @@ const Booking = () => {
   return (
     <div className="p-6 bg-white shadow rounded-md">
       <h2 className="text-xl font-semibold mb-4">Quản lý đơn đặt phòng</h2>
-      <Table columns={columns} dataSource={bookings} rowKey="id" />
-
-      {/* Modal xem chi tiết */}
+      <Table columns={columns} dataSource={bookingsData} rowKey="_id" />{" "}
+      {/* Sửa rowKey thành "_id" nếu API dùng _id */}
       <Modal
         title="Chi tiết đơn đặt phòng"
         open={isModalOpen}
@@ -128,19 +178,24 @@ const Booking = () => {
               <strong>Khách hàng:</strong> {selectedBooking.customer}
             </p>
             <p>
-              <strong>Nhận phòng:</strong> {selectedBooking.checkIn}
+              <strong>Nhận phòng:</strong> {formatDate(selectedBooking.checkIn)}
             </p>
             <p>
-              <strong>Trả phòng:</strong> {selectedBooking.checkOut}
+              <strong>Trả phòng:</strong> {formatDate(selectedBooking.checkOut)}
             </p>
             <p>
-              <strong>Loại phòng:</strong> {selectedBooking.roomType}
+              <strong>Tổng tiền:</strong>{" "}
+              {selectedBooking.totalPrice.toLocaleString("vi-VN")} VND
             </p>
             <p>
-              <strong>Tổng tiền:</strong> {selectedBooking.totalPrice}
-            </p>
-            <p>
-              <strong>Trạng thái:</strong> {selectedBooking.status}
+              <strong>Trạng thái:</strong>{" "}
+              {selectedBooking.status === "pending"
+                ? "Chờ xác nhận"
+                : selectedBooking.status === "confirmed"
+                ? "Đã xác nhận"
+                : selectedBooking.status === "completed"
+                ? "Hoàn thành"
+                : "Đã hủy"}
             </p>
           </div>
         )}

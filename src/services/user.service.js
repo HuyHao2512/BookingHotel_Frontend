@@ -79,3 +79,34 @@ export const getAvailableRooms = async (id, checkIn, checkOut) => {
   });
   return res;
 };
+
+export const likeProperty = async (data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.post(`${URL}/liked`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return res;
+};
+
+export const getLikedProperties = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.get(`${URL}/liked/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
+
+// export const getBookingByUser = async (id) => {
+//   const token = localStorage.getItem("accessToken");
+//   const res = await axios.get(`${URL}/booking/user/${id}`, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   return res;
+// };

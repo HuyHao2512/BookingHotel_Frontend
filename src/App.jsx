@@ -66,7 +66,7 @@ function LoadingWrapper({ setLoading }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 500); // Giả lập tải trang
+    const timer = setTimeout(() => setLoading(false), 300); // Giả lập tải trang
     return () => clearTimeout(timer);
   }, [location.pathname]);
 

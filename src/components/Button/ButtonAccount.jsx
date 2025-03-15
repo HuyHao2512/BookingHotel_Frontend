@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { Popover, Button, Avatar, List, message } from "antd";
+import { Popover, List, message } from "antd";
 import * as authService from "../../services/auth.service";
 import {
   UserOutlined,
@@ -11,13 +11,12 @@ import {
   DatabaseOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
-
 const menuItems = [
   {
     key: "orders",
     label: "Đơn đặt phòng",
     icon: <DatabaseOutlined />,
-    path: "/orders",
+    path: `/booking-history/${localStorage.getItem("userId")}`,
   },
   {
     key: "wishlist",
@@ -55,10 +54,8 @@ const ButtonAccount = () => {
     logoutMutation.mutate({
       refreshToken: localStorage.getItem("refreshToken"),
     });
-    navigate("/login");
   };
 
-  // Hàm xử lý click để chuyển trang hoặc logout
   const handleMenuClick = (item) => {
     if (item.key === "logout") {
       handleLogout();
@@ -68,21 +65,20 @@ const ButtonAccount = () => {
   };
 
   const content = (
-    <StyledMenu>
-      <List
-        dataSource={menuItems}
-        renderItem={(item) => (
-          <List.Item>
-            <StyledButton
-              danger={item.danger}
-              onClick={() => handleMenuClick(item)}
-            >
-              {item.icon} {item.label}
-            </StyledButton>
-          </List.Item>
-        )}
-      />
-    </StyledMenu>
+    <List
+      dataSource={menuItems}
+      renderItem={(item) => (
+        <List.Item style={{ padding: 0 }}>
+          <StyledMenuButton
+            danger={item.danger}
+            onClick={() => handleMenuClick(item)}
+          >
+            <span className="icon">{item.icon}</span>
+            <span className="label">{item.label}</span>
+          </StyledMenuButton>
+        </List.Item>
+      )}
+    />
   );
 
   return (
@@ -90,7 +86,7 @@ const ButtonAccount = () => {
       <Popover content={content} trigger="click" placement="bottomRight">
         <StyledAccountButton>
           <StyledUserIcon />
-          <span>Tài khoản</span>
+          <span className="label">Tài khoản</span>
         </StyledAccountButton>
       </Popover>
     </StyledWrapper>
@@ -100,55 +96,77 @@ const ButtonAccount = () => {
 const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
 `;
 
-const StyledAccountButton = styled(Button)`
+const StyledAccountButton = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #ffffff;
-  color: #007bff;
-  font-weight: bold;
-  border-radius: 8px;
-  padding: 8px 16px;
-  border: 2px solid #ffffff;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 50px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  border: 2px solid #2563eb;
 
   &:hover {
-    background-color: #ffffff;
-    color: #0056b3;
-    transform: scale(1.05);
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #1e40af, #60a5fa);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    border-color: #93c5fd;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .label {
+    letter-spacing: 0.5px;
   }
 `;
 
 const StyledUserIcon = styled(UserOutlined)`
-  font-size: 18px;
-  color: #007bff;
+  font-size: 20px;
+  color: #ffffff;
 `;
 
-const StyledMenu = styled.div`
-  min-width: 160px;
-`;
-
-const StyledButton = styled.button`
+const StyledMenuButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
-  background: none;
+  background: transparent;
   border: none;
-  padding: 8px 12px;
+  padding: 12px 20px;
   cursor: pointer;
-  font-size: 14px;
-  text-align: left;
-  color: ${({ danger }) => (danger ? "red" : "black")};
+  font-size: 15px;
+  font-weight: 500;
+  color: ${({ danger }) => (danger ? "#ef4444" : "#1f2937")};
+  transition: all 0.3s ease;
 
   &:hover {
-    background: #f0f0f0;
+    background: linear-gradient(90deg, #f3f4f6, #e5e7eb);
+    color: ${({ danger }) => (danger ? "#dc2626" : "#1e40af")};
+  }
+
+  .icon {
+    font-size: 18px;
+    color: ${({ danger }) => (danger ? "#ef4444" : "#6b7280")};
+  }
+
+  .label {
+    flex: 1;
+    text-align: left;
+    letter-spacing: 0.5px;
+  }
+
+  &:hover .icon {
+    color: ${({ danger }) => (danger ? "#dc2626" : "#1e40af")};
   }
 `;
 

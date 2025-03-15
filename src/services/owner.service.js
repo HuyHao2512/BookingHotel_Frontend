@@ -91,3 +91,41 @@ export const getRoomByProperty = async (id) => {
   const res = await axios.get(`http://localhost:3000/rooms/property/${id}`);
   return res;
 };
+
+export const getBookingByProperty = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.get(`http://localhost:3000/booking/property/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
+
+export const updateBookingStatus = async (id, status) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.patch(
+    `http://localhost:3000/booking/status/${id}`,
+    { status },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};
+
+export const releaseRoom = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.patch(
+    `http://localhost:3000/booking/release-room/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};

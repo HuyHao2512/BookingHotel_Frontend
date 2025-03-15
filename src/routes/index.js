@@ -16,6 +16,7 @@ import ListUser from "../pages/Admin/ListUser";
 import Discount from "../pages/Owner/Discount";
 import SignUpOwner from "../pages/AuthPage/SignUpOwner";
 import LikePage from "../pages/LikePage/LikePage";
+
 export const routes = [
   {
     path: "/",
@@ -57,7 +58,7 @@ export const routes = [
     isShowHeader: false,
   },
   {
-    path: "/booking-history",
+    path: "/booking-history/:id",
     page: BookingHistory,
     isShowHeader: true,
   },

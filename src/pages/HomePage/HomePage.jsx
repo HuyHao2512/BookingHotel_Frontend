@@ -4,8 +4,8 @@ import SearchByType from "../../components/SearchByType/SearchByType";
 import PropertyList from "../../components/Property/PropertyList";
 import ForeignDestiantion from "../../components/Destinations/ForeignDestination";
 import Explore from "../../components/Home/Explore";
-import useCity from "../../hooks/useCity";
 import useCategory from "../../hooks/useCategory";
+import { FloatButton } from "antd";
 function HomePage() {
   const {
     data: categoryData,
@@ -20,11 +20,11 @@ function HomePage() {
         types={categoryData}
         onSelect={(type) => console.log(type)}
       />
-      ;
       <VietnamDestinations />
       <ForeignDestiantion />
       <PropertyList />
       <Explore />
+      <FloatButton.BackTop visibilityHeight={0} />
     </div>
   );
 }
