@@ -101,12 +101,28 @@ export const getLikedProperties = async (id) => {
   return res;
 };
 
-// export const getBookingByUser = async (id) => {
-//   const token = localStorage.getItem("accessToken");
-//   const res = await axios.get(`${URL}/booking/user/${id}`, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   return res;
-// };
+export const getBookingByUser = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.get(`${URL}/booking/user/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
+
+export const review = async (data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.post(`${URL}/reviews`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return res;
+};
+
+export const getReviews = async (id) => {
+  const res = await instance.get(`/reviews/property/${id}`);
+  return res;
+};

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Tag, Spin, Empty, Button } from "antd";
+import { Card, Tag, Spin, Empty, Button, message, Popconfirm } from "antd";
 import { motion } from "framer-motion";
 import {
   FaCalendarCheck,
@@ -7,68 +7,25 @@ import {
   FaHotel,
   FaEye,
 } from "react-icons/fa";
-import BookingDetailModal from "../../components/Modal/BookingDetailModal"; // Import component modal
+import BookingDetailModal from "../../components/Modal/BookingDetailModal";
 import useBookingByUser from "../../hooks/useBookingByUser";
 import { useParams } from "react-router-dom";
+import * as ownerService from "../../services/owner.service";
+import { useMutation } from "@tanstack/react-query";
+
 const BookingHistory = () => {
-  const rawData = [
-    {
-      _id: "67cbce671678e307228f8b19",
-      propertyName: "InterContinental Danang Sun Peninsula Resort by IHG",
-      rooms: [
-        {
-          room: "67c958ed4e130ee04bcdf5ae",
-          name: "Suite Có Giường Cỡ King, Sân Hiên Và Tầm Nhìn Ra Biển",
-          quantity: 1,
-          price: 23645000,
-        },
-        {
-          room: "67c958ed4e130ee04bcdf5af",
-          name: "Deluxe Room",
-          quantity: 2,
-          price: 15000000,
-        },
-      ],
-      name: "Huy Hao",
-      checkIn: "2025-03-10T00:00:00.000Z",
-      checkOut: "2025-03-12T00:00:00.000Z",
-      totalPrice: 53645000,
-      isPaid: false,
-      email: "huyhao2512@gmail.com",
-    },
-    {
-      _id: "67cbce671678e307228f8b18",
-      propertyName: "InterContinental Danang Sun Peninsula Resort by IHG",
-      rooms: [
-        {
-          room: "67c958ed4e130ee04bcdf5ae",
-          name: "Suite Có Giường Cỡ King, Sân Hiên Và Tầm Nhìn Ra Biển",
-          quantity: 1,
-          price: 23645000,
-        },
-        {
-          room: "67c958ed4e130ee04bcdf5af",
-          name: "Deluxe Room",
-          quantity: 2,
-          price: 15000000,
-        },
-      ],
-      name: "Huy Hao",
-      checkIn: "2025-03-10T00:00:00.000Z",
-      checkOut: "2025-03-12T00:00:00.000Z",
-      totalPrice: 53645000,
-      isPaid: false,
-      email: "huyhao2512@gmail.com",
-    },
-  ];
   const { id } = useParams();
-  // const {
-  //   data: rawData,
-  //   isloading: isRawDataLoading,
-  //   isError: isRawDataError,
-  // } = useBookingByUser(id);
-  // if (isRawDataLoading) return <h1>Đang tải...</h1>;
-  // if (isRawDataError) return <h1>Đã xảy ra lỗi</h1>;
+  const {
+    data: bookingData,
+    isLoading: isBookingDataLoading,
+    isError: isBookingDataError,
+    error,
+  } = useBookingByUser(id, {
+    enabled: !!id, // Chỉ gọi khi id hợp lệ
+    staleTime: 5 * 60 * 1000, // Cache 5 phút
+    cacheTime: 10 * 60 * 1000, // Giữ cache 10 phút
+  });
+
   const [visibleBookings, setVisibleBookings] = React.useState(2);
   const [loading, setLoading] = React.useState(false);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
@@ -76,29 +33,90 @@ const BookingHistory = () => {
 
   const bookingsPerPage = 2;
 
-  // 🔹 Hàm xử lý nút "Xem thêm"
   const handleShowMore = () => {
     setVisibleBookings((prev) => prev + bookingsPerPage);
   };
 
-  // 🔹 Hàm mở modal
   const showModal = (booking) => {
     setSelectedBooking(booking);
     setIsModalVisible(true);
   };
 
-  // 🔹 Hàm đóng modal
   const handleCloseModal = () => {
     setIsModalVisible(false);
     setSelectedBooking(null);
   };
 
-  // 🔹 Animation Variants
+  const cancelMutation = useMutation({
+    mutationFn: (id) => ownerService.releaseRoom(id),
+    onSuccess: () => {
+      message.success("Đã hủy đơn đặt phòng!");
+    },
+    onError: (error) => {
+      message.error("Có lỗi khi hủy: " + error.message);
+    },
+  });
+
+  const confirm = (e) => {
+    cancelMutation.mutate(e);
+  };
+
+  const cancel = (e) => {
+    console.log(e);
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
+  if (isBookingDataLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spin size="large" tip="Đang tải dữ liệu..." />
+      </div>
+    );
+  }
+
+  if (isBookingDataError) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-80"
+      >
+        <Empty
+          image={<FaHotel className="text-6xl text-gray-400 mx-auto" />}
+          description={
+            <span className="text-gray-500">
+              Đã xảy ra lỗi: {error?.message || "Không thể tải dữ liệu."}
+            </span>
+          }
+        />
+      </motion.div>
+    );
+  }
+
+  if (!bookingData || bookingData.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-80"
+      >
+        <Empty
+          image={<FaHotel className="text-6xl text-gray-400 mx-auto" />}
+          description={
+            <span className="text-gray-500">
+              Bạn chưa có lịch sử đặt phòng nào.
+            </span>
+          }
+        />
+      </motion.div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 p-4 md:p-8 flex justify-center items-start">
       <div className="w-full max-w-4xl">
@@ -115,24 +133,9 @@ const BookingHistory = () => {
           <div className="flex justify-center items-center h-64">
             <Spin size="large" tip="Đang tải dữ liệu..." />
           </div>
-        ) : rawData.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Empty
-              image={<FaHotel className="text-6xl text-gray-400 mx-auto" />}
-              description={
-                <span className="text-gray-500">
-                  Bạn chưa có lịch sử đặt phòng nào.
-                </span>
-              }
-            />
-          </motion.div>
         ) : (
           <>
-            {rawData.slice(0, visibleBookings).map((booking, index) => (
+            {bookingData.slice(0, visibleBookings).map((booking, index) => (
               <motion.div
                 key={booking._id}
                 className="mb-6"
@@ -207,14 +210,39 @@ const BookingHistory = () => {
                           {booking.totalPrice.toLocaleString("vi-VN")} VND
                         </p>
                       </div>
+                      <p className="mt-2">
+                        <strong>Trạng thái: </strong>
+                        {booking.status === "pending"
+                          ? "Chờ xác nhận"
+                          : booking.status === "confirmed"
+                          ? "Đã xác nhận"
+                          : "Đã hủy"}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 text-right">
+                  <div className="mt-4 flex justify-end gap-4">
+                    {booking.status === "pending" && (
+                      <Popconfirm
+                        title="Hủy đặt phòng"
+                        description="Bạn có chắc chắn muốn hủy đặt phòng? Hành động này không thể hoàn tác."
+                        onConfirm={() => confirm(booking._id)}
+                        onCancel={cancel}
+                        okText="ĐỒNG Ý"
+                        cancelText="HỦY"
+                      >
+                        <Button
+                          type="default"
+                          className="border-yellow-500 text-yellow-500 hover:bg-yellow-100 px-4 py-2 rounded-lg transition"
+                        >
+                          Hủy đặt phòng
+                        </Button>
+                      </Popconfirm>
+                    )}
                     <Button
                       type="default"
                       icon={<FaEye />}
-                      className="border-blue-600 text-blue-600"
+                      className="border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-lg transition flex items-center gap-2"
                       onClick={() => showModal(booking)}
                     >
                       Xem chi tiết
@@ -224,7 +252,7 @@ const BookingHistory = () => {
               </motion.div>
             ))}
 
-            {visibleBookings < rawData.length && (
+            {visibleBookings < bookingData.length && (
               <div className="text-center mt-8">
                 <Button
                   type="primary"
@@ -238,7 +266,6 @@ const BookingHistory = () => {
           </>
         )}
 
-        {/* Sử dụng component BookingDetailModal */}
         <BookingDetailModal
           visible={isModalVisible}
           booking={selectedBooking}

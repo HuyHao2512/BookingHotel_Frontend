@@ -1,4 +1,4 @@
-import { Button, Typography, DatePicker, Row, Col, message } from "antd";
+import { Button, Typography, DatePicker, Row, Col, message, Spin } from "antd";
 import { useState } from "react";
 import { useBooking } from "../../contexts/BookingContext";
 import useAvailableRooms from "../../hooks/useAvailableRooms";
@@ -14,8 +14,8 @@ const AvailableRooms = ({ dataSource }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { updateBooking } = useBooking(); // Gọi từ context
-  const [checkInDate, setcheckInDate] = useState(dayjs());
-  const [checkOutDate, setcheckOutDate] = useState(dayjs().add(1, "day"));
+  const [checkInDate, setcheckInDate] = useState(dayjs().add(1, "day")); // Ngày mai
+  const [checkOutDate, setcheckOutDate] = useState(dayjs().add(2, "day")); // Ngày kia
   const checkIn = checkInDate.format("YYYY-MM-DD");
   const checkOut = checkOutDate.format("YYYY-MM-DD");
   const [rooms, setRooms] = useState(
@@ -28,6 +28,9 @@ const AvailableRooms = ({ dataSource }) => {
     isLoading,
     isError,
   } = useAvailableRooms(id, checkIn, checkOut);
+  const disabledDate = (current) => {
+    return current && current < dayjs().startOf("day"); // Không cho chọn ngày quá khứ
+  };
   const handleSearch = () => {
     if (!checkIn || !checkOut) {
       message.error("Vui lòng chọn ngày để kiểm tra");
@@ -82,7 +85,13 @@ const AvailableRooms = ({ dataSource }) => {
     setIsModalVisible(true);
     console.log("Chi tiết phòng:", room);
   };
-
+  if (isLoading)
+    return (
+      <div>
+        <Spin size="large" />
+      </div>
+    );
+  if (isError) return <div>Error</div>;
   return (
     <div className="w-full h-full mt-4">
       <h1 className="text-2xl font-bold mb-4">Phòng trống</h1>
@@ -99,6 +108,7 @@ const AvailableRooms = ({ dataSource }) => {
               setcheckInDate(values?.[0]);
               setcheckOutDate(values?.[1]);
             }}
+            disabledDate={disabledDate}
           />
         </Col>
         <Col span={6}>
