@@ -6,15 +6,39 @@ import {
   DatabaseOutlined,
   PicLeftOutlined,
   LogoutOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
+import { Button, Layout, Menu, theme, message } from "antd";
 import { BrowserRouter as Router, useNavigate, Outlet } from "react-router-dom";
+import * as authService from "../../services/auth.service";
+import { useMutation } from "@tanstack/react-query";
 const { Header, Sider, Content } = Layout;
-
 function LayoutAdmin() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+  const logoutMutation = useMutation({
+    mutationFn: (data) => authService.logout(data),
+    onSuccess: () => {
+      message.success("Đăng xuất thành công!");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("email");
+      navigate("/login");
+    },
+    onError: (error) => {
+      message.error("Đăng xuất thất bại!");
+      console.log("Error:", error);
+    },
+  });
+  const handleLogout = () => {
+    logoutMutation.mutate({
+      refreshToken: localStorage.getItem("refreshToken"),
+    });
+  };
   const handleMenuClick = (e) => {
     if (e.key === "logout") {
       handleLogout();
@@ -22,9 +46,6 @@ function LayoutAdmin() {
       navigate(e.key);
     }
   };
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed} theme="light">
@@ -45,12 +66,12 @@ function LayoutAdmin() {
             {
               key: "/admin/users",
               icon: <PicLeftOutlined />,
-              label: "Danh mục phòng",
+              label: "Danh sách người dùng",
             },
             {
-              key: "/admin/booking",
+              key: "/admin/city",
               icon: <AreaChartOutlined />,
-              label: "Đơn hàng",
+              label: "Khu vực lưu trú",
             },
             {
               key: "logout",

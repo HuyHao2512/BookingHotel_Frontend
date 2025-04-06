@@ -129,3 +129,19 @@ export const releaseRoom = async (id) => {
   );
   return res;
 };
+
+export const getRevenue = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.get(
+    "http://localhost:3000/booking/property-revenue",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        propertyId: id, // Chuyển `id` thành query param
+      },
+    }
+  );
+  return res;
+};

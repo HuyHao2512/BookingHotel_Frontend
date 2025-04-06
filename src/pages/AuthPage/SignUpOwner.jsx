@@ -10,13 +10,15 @@ import {
   Select,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import * as ownerService from "../../services/owner.service";
 import useAmenities from "../../hooks/useAmenities";
 import useCity from "../../hooks/useCity";
 import useCategory from "../../hooks/useCategory";
 export default function SignUpOwner() {
   const [form] = Form.useForm(); // Tạo instance của form
+  const navigate = useNavigate();
   const [fileList, setFileList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hotelData, setHotelData] = useState({
@@ -112,6 +114,9 @@ export default function SignUpOwner() {
     onSuccess: (data) => {
       console.log("Data:", data);
       message.success("Đăng ký thành công!");
+      localStorage.removeItem("email");
+      localStorage.removeItem("userId");
+      navigate("/login");
     },
     onError: (error) => {
       console.log("Error:", error);

@@ -1,52 +1,53 @@
-import { Layout, Card, Statistic } from "antd";
+import { Layout, Card } from "antd";
 import {
-  DollarOutlined,
-  WalletOutlined,
-  FileDoneOutlined,
-  FieldNumberOutlined,
-} from "@ant-design/icons";
-import CountUp from "react-countup";
-import { useEffect, useState } from "react";
-const { Header, Content } = Layout;
-const CountUpStatistic = ({ title, value, prefix }) => (
-  <Card className="shadow">
-    <Statistic
-      title={title}
-      valueRender={() => (
-        <CountUp start={0} end={value} duration={2} separator="," />
-      )}
-      prefix={prefix}
-    />
-  </Card>
-);
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import useFindByOwner from "../../hooks/useFindByOwner";
+import { useQuery } from "@tanstack/react-query";
+import * as ownerService from "../../services/owner.service";
+const { Content } = Layout;
 const Dashboard = () => {
+  const { data: propertyData } = useFindByOwner();
+  const propertyId = propertyData?.data[0]?._id; // Lấy propertyId từ dữ liệu chủ nhà
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["propertyRevenue", propertyId],
+    queryFn: () => ownerService.getRevenue(propertyId),
+  });
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading data</div>;
+  console.log("data", data.data);
+  const transformedData = Object.entries(data.data).map(([month, values]) => ({
+    name: month,
+    totalBookings: values.totalBookings,
+    totalRevenue: values.totalRevenue,
+  }));
   return (
-    <Layout className="min-h-screen bg-gray-100">
-      <Content className="p-6">
-        {/* Thống kê nhanh */}
-        <div className="grid grid-cols-3 gap-6">
-          <CountUpStatistic
-            title="Số lượt đặt phòng tháng này"
-            value={120}
-            prefix={<FileDoneOutlined />}
-          />
-          <CountUpStatistic
-            title="Số lượt đặt phòng quý này"
-            value={50}
-            prefix={<WalletOutlined />}
-            CountUpStatistic
-          />
-          <CountUpStatistic
-            title="Doanh thu tháng"
-            value="50,000,000 VND"
-            prefix={<DollarOutlined />}
-          />
-          <CountUpStatistic
-            title="Số lượng phòng "
-            value="200"
-            prefix={<FieldNumberOutlined />}
-          />
-        </div>
+    <Layout className="min-h-screen bg-gray-100 flex justify-center items-center">
+      <Content className="p-6 w-full max-w-4xl">
+        <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+          Thống kê doanh thu
+        </h2>
+        <Card className="shadow-lg rounded-xl p-4 bg-white">
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart
+              data={transformedData} // Sử dụng dữ liệu đã chuyển đổi
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip cursor={{ fill: "rgba(0, 0, 0, 0.1)" }} />
+              <Legend />
+              <Bar dataKey="totalBookings" fill="#4CAF50" name="Số lượt đặt" />
+              <Bar dataKey="totalRevenue" fill="#3B82F6" name="Doanh thu" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
       </Content>
     </Layout>
   );

@@ -16,6 +16,9 @@ import ListUser from "../pages/Admin/ListUser";
 import Discount from "../pages/Owner/Discount";
 import SignUpOwner from "../pages/AuthPage/SignUpOwner";
 import LikePage from "../pages/LikePage/LikePage";
+import ListCity from "../pages/Admin/ListCity";
+import PaymentPage from "../pages/Booking/PaymentPage";
+import PaymentResult from "../pages/Booking/PaymentResult";
 
 export const routes = [
   {
@@ -68,6 +71,16 @@ export const routes = [
     isShowHeader: true,
   },
   {
+    path: "/payment-success",
+    page: PaymentResult,
+    isShowHeader: false,
+  },
+  {
+    path: "/payment",
+    page: PaymentPage,
+    isShowHeader: false,
+  },
+  {
     path: "/admin",
     page: LayoutAdmin,
     isAdmin: true, // Đánh dấu đây là trang admin
@@ -79,6 +92,10 @@ export const routes = [
       {
         path: "users",
         page: ListUser,
+      },
+      {
+        path: "city",
+        page: ListCity,
       },
     ],
   },

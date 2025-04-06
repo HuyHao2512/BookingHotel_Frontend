@@ -73,7 +73,7 @@ function LayoutOwner() {
             {
               key: "/owner/booking",
               icon: <FileTextOutlined />,
-              label: "Đơn hàng",
+              label: "Đơn đặt phòng",
             },
             {
               key: "/owner/discount",

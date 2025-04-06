@@ -56,6 +56,7 @@ function BookingInfo() {
 
   const handleConfirm = () => {
     bookingMutation.mutate(booking); // Truyền dữ liệu booking vào đây
+    navigate("/payment"); // Chuyển hướng đến trang thanh toán thành công
   };
 
   return (
@@ -90,12 +91,19 @@ function BookingInfo() {
                       <Button className="mr-4" onClick={() => navigate(-1)}>
                         Quay lại
                       </Button>
-                      <Button type="primary" onClick={nextStep}>
+
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          nextStep(); // Tiếp tục nếu không phải VNPay
+                        }}
+                      >
                         Đi đến bước cuối cùng
                       </Button>
                     </div>
                   </Col>
                 )}
+
                 {currentStep === 2 && (
                   <Col span={18}>
                     <div className="border p-4 w-full border-blue-200">

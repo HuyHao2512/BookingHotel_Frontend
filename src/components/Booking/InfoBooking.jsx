@@ -188,7 +188,7 @@ const InfoBooking = ({ onValidate }) => {
             onChange={(e) => setOnlinePaymentMethod(e.target.value)}
           >
             <div className="space-y-2">
-              <Radio value="credit_card">Thẻ tín dụng / Ghi nợ</Radio> <br />
+              <Radio value="credit_card">VN PAY</Radio> <br />
               <Radio value="momo">Momo</Radio> <br />
               <Radio value="zalopay">ZaloPay</Radio> <br />
               <Radio value="bank_transfer">Chuyển khoản ngân hàng</Radio>
