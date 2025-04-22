@@ -1,9 +1,9 @@
 import React from "react";
-import useTypeRoom from "../../hooks/useTypeRoom";
+import useConveniences from "../../hooks/useConveniences"; // Giả sử bạn đã tạo hook này
 import { Table, Spin, Alert, Button, Space } from "antd";
 
-function ListTypeRoom() {
-  const { data: typerooms, isLoading, error } = useTypeRoom();
+function ListConveniece() {
+  const { data: conveniences, isLoading, error } = useConveniences();
 
   if (isLoading) return <Spin size="large" />;
   if (error)
@@ -17,8 +17,7 @@ function ListTypeRoom() {
 
   // Cấu hình cột của bảng
   const columns = [
-    { title: "Tên loại phòng", dataIndex: "name", key: "name" },
-    { title: "Mô tả", dataIndex: "description", key: "description" },
+    { title: "Tên tiện nghi", dataIndex: "name", key: "name" },
     {
       title: "Hành động",
       key: "action",
@@ -32,12 +31,12 @@ function ListTypeRoom() {
 
   return (
     <div>
-      <h2>Danh Sách Loại Phòng</h2>
+      <h2>Danh Sách Tiện Nghi</h2>
       <Button type="primary" className="mb-4">
         + Thêm Phòng
       </Button>
       <Table
-        dataSource={typerooms || []}
+        dataSource={conveniences || []}
         columns={columns}
         rowKey="_id" // Giả sử mỗi thành phố có `_id`
         pagination={{ pageSize: 10 }}
@@ -46,4 +45,4 @@ function ListTypeRoom() {
   );
 }
 
-export default ListTypeRoom;
+export default ListConveniece;

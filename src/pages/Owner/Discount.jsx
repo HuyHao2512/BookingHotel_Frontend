@@ -12,13 +12,13 @@ import { useState } from "react";
 import dayjs from "dayjs";
 
 const sampleDiscounts = [
-  { id: 1, code: "SALE10", discount: 10, expiry: "2025-03-31", active: true },
+  { id: 1, code: "SALE10", discount: 10, expiry: "2025-03-31", active: false },
   {
     id: 2,
     code: "WELCOME20",
     discount: 20,
     expiry: "2025-04-15",
-    active: true,
+    active: false,
   },
   {
     id: 3,

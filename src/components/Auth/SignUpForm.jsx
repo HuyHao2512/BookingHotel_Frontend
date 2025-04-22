@@ -19,7 +19,7 @@ const SignUpForm = ({ toggleForm }) => {
       if (isOwner) {
         window.location.href = "/signup";
       } else {
-        window.location.href = "/";
+        window.location.href = "/login";
       }
     },
     onError: (error) => {

@@ -19,6 +19,10 @@ import LikePage from "../pages/LikePage/LikePage";
 import ListCity from "../pages/Admin/ListCity";
 import PaymentPage from "../pages/Booking/PaymentPage";
 import PaymentResult from "../pages/Booking/PaymentResult";
+import ListTypeRoom from "../pages/Admin/ListTypeRoom";
+import ListAmenity from "../pages/Admin/ListAmenity";
+import ListConveniece from "../pages/Admin/ListConvenience";
+import ListCategory from "../pages/Admin/ListCategory";
 
 export const routes = [
   {
@@ -96,6 +100,22 @@ export const routes = [
       {
         path: "city",
         page: ListCity,
+      },
+      {
+        path: "typeroom",
+        page: ListTypeRoom,
+      },
+      {
+        path: "amenity",
+        page: ListAmenity,
+      },
+      {
+        path: "convenience",
+        page: ListConveniece,
+      },
+      {
+        path: "category",
+        page: ListCategory,
       },
     ],
   },

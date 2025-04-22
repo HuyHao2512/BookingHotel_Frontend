@@ -7,6 +7,10 @@ import {
   PicLeftOutlined,
   LogoutOutlined,
   FileTextOutlined,
+  BoxPlotOutlined,
+  SlidersOutlined,
+  AppstoreOutlined,
+  ContainerOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme, message } from "antd";
 import { BrowserRouter as Router, useNavigate, Outlet } from "react-router-dom";
@@ -72,6 +76,26 @@ function LayoutAdmin() {
               key: "/admin/city",
               icon: <AreaChartOutlined />,
               label: "Khu vực lưu trú",
+            },
+            {
+              key: "/admin/amenity",
+              icon: <BoxPlotOutlined />,
+              label: "Tiện ích",
+            },
+            {
+              key: "/admin/convenience",
+              icon: <SlidersOutlined />,
+              label: "Tiện nghi",
+            },
+            {
+              key: "/admin/typeroom",
+              icon: <ContainerOutlined />,
+              label: "Danh sách loại phòng",
+            },
+            {
+              key: "/admin/category",
+              icon: <AppstoreOutlined />,
+              label: "Danh sách loại lưu trú",
             },
             {
               key: "logout",

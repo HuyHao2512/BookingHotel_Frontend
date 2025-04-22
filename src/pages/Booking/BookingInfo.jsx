@@ -56,7 +56,6 @@ function BookingInfo() {
 
   const handleConfirm = () => {
     bookingMutation.mutate(booking); // Truyền dữ liệu booking vào đây
-    navigate("/payment"); // Chuyển hướng đến trang thanh toán thành công
   };
 
   return (
