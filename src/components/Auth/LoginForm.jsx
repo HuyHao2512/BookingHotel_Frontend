@@ -10,7 +10,6 @@ const LoginForm = ({ toggleForm }) => {
   const loginMutation = useMutation({
     mutationFn: (data) => authService.login(data),
     onSuccess: (data) => {
-      console.log("Data:", data);
       message.success("Đăng nhập thành công");
       localStorage.setItem("accessToken", data.data.access_token);
       localStorage.setItem("refreshToken", data.data.refresh_token);
@@ -37,6 +36,9 @@ const LoginForm = ({ toggleForm }) => {
   const handleSubmit = (e) => {
     e.preventDefault(); // Ngăn chặn reload trang
     loginMutation.mutate({ username: username, password: password }); // Gửi request đăng nhập
+  };
+  const handleLoginGoole = () => {
+    authService.loginGoogle();
   };
   return (
     <StyledWrapper>
@@ -76,7 +78,7 @@ const LoginForm = ({ toggleForm }) => {
         <div className="social-account-container">
           <span className="title">Or Sign in with</span>
           <div className="social-accounts">
-            <button className="social-button google">
+            <button className="social-button google" onClick={handleLoginGoole}>
               <svg
                 className="svg"
                 xmlns="http://www.w3.org/2000/svg"

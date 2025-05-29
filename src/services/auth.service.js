@@ -31,5 +31,5 @@ export const logout = async ({ refreshToken }) => {
   return res;
 };
 export const loginGoogle = () => {
-  window.location.href = "http://localhost:3000/auth/google";
+  window.open("http://localhost:3000/auth/google"); // Mở tab mới
 };

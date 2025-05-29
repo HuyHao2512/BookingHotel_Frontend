@@ -23,6 +23,7 @@ import ListTypeRoom from "../pages/Admin/ListTypeRoom";
 import ListAmenity from "../pages/Admin/ListAmenity";
 import ListConveniece from "../pages/Admin/ListConvenience";
 import ListCategory from "../pages/Admin/ListCategory";
+import GoogleCallback from "../pages/AuthPage/GoogleCallback";
 
 export const routes = [
   {
@@ -82,6 +83,11 @@ export const routes = [
   {
     path: "/payment",
     page: PaymentPage,
+    isShowHeader: false,
+  },
+  {
+    path: "/auth/google/callback",
+    page: GoogleCallback,
     isShowHeader: false,
   },
   {
