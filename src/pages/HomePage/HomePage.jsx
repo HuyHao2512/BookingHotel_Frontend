@@ -15,7 +15,7 @@ function HomePage() {
   if (isCategoryLoading) return <p>Đang tải danh mục...</p>;
   if (isCategoryError) return <p>Lỗi khi tải danh mục.</p>;
   return (
-    <div>
+    <div className="bg-blue-50 min-h-screen">
       <SearchByType
         types={categoryData}
         onSelect={(type) => console.log(type)}

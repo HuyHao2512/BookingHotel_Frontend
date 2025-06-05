@@ -120,7 +120,7 @@ const PropertyPage = () => {
                 </button>
               </div>
               <></>
-              <MapComponent />
+              <MapComponent longitude={property.long} latitude={property.lat} />
             </Col>
           </Row>
         </div>

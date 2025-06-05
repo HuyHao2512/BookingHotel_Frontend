@@ -24,7 +24,10 @@ const SignUpForm = ({ toggleForm }) => {
     },
     onError: (error) => {
       console.log("Error:", error);
-      message.error("Đăng ký thất bại!");
+      message.error(error.response?.data?.message || "Đăng ký thất bại!");
+      setUsername("");
+      setPassword("");
+      setConfirmPassword("");
     },
   });
   const handleSubmit = (e) => {
@@ -41,8 +44,6 @@ const SignUpForm = ({ toggleForm }) => {
       password: password,
       roles: isOwner ? ["owner"] : ["user"], // Nếu checked thì là "owner", ngược lại là "user"
     };
-
-    console.log("Sending Data:", userData); // Debug dữ liệu trước khi gửi
 
     registerMutation.mutate(userData);
   };

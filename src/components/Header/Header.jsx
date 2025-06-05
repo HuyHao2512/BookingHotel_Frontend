@@ -47,7 +47,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white px-6 py-6 shadow-lg">
+    <header className="bg-[url('/images/bg.webp')] bg-cover bg-center text-blue-200 px-6 py-6 shadow-lg h-[400px] ">
       {/* Top Navigation */}
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         <Link to="/">
@@ -73,9 +73,6 @@ const Header = () => {
         <h1 className="text-4xl font-extrabold tracking-tight">
           Tìm chỗ nghỉ tiếp theo của bạn
         </h1>
-        <p className="text-lg mt-2 opacity-90">
-          Khám phá ưu đãi khách sạn, nhà nghỉ và nhiều hơn nữa...
-        </p>
       </div>
 
       {/* Search Bar */}
