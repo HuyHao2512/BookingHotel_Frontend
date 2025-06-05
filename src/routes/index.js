@@ -17,13 +17,12 @@ import Discount from "../pages/Owner/Discount";
 import SignUpOwner from "../pages/AuthPage/SignUpOwner";
 import LikePage from "../pages/LikePage/LikePage";
 import ListCity from "../pages/Admin/ListCity";
-import PaymentPage from "../pages/Booking/PaymentPage";
-import PaymentResult from "../pages/Booking/PaymentResult";
 import ListTypeRoom from "../pages/Admin/ListTypeRoom";
 import ListAmenity from "../pages/Admin/ListAmenity";
 import ListConveniece from "../pages/Admin/ListConvenience";
 import ListCategory from "../pages/Admin/ListCategory";
 import GoogleCallback from "../pages/AuthPage/GoogleCallback";
+import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 
 export const routes = [
   {
@@ -76,18 +75,13 @@ export const routes = [
     isShowHeader: true,
   },
   {
-    path: "/payment-success",
-    page: PaymentResult,
-    isShowHeader: false,
-  },
-  {
-    path: "/payment",
-    page: PaymentPage,
-    isShowHeader: false,
-  },
-  {
     path: "/auth/google/callback",
     page: GoogleCallback,
+    isShowHeader: false,
+  },
+  {
+    path: "/payment/success",
+    page: PaymentSuccess,
     isShowHeader: false,
   },
   {

@@ -51,9 +51,19 @@ const ButtonAccount = () => {
     },
   });
   const handleLogout = () => {
-    logoutMutation.mutate({
-      refreshToken: localStorage.getItem("refreshToken"),
-    });
+    const refresh_token = localStorage.getItem("refreshTojken");
+    if (refresh_token) {
+      logoutMutation.mutate({
+        refreshToken: localStorage.getItem("refreshToken"),
+      });
+    } else {
+      message.success("Đăng xuất thành công!");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("email");
+      navigate("/login");
+    }
   };
 
   const handleMenuClick = (item) => {

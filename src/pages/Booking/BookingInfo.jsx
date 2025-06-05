@@ -11,14 +11,14 @@ import { Footer } from "antd/es/layout/layout";
 import { useNavigate } from "react-router-dom";
 import * as userServices from "../../services/user.service";
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 function BookingInfo() {
   const [isValid, setIsValid] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { booking } = useBooking(); // Lấy dữ liệu booking từ context
   const navigate = useNavigate();
 
-  const { booking } = useBooking(); // Lấy dữ liệu đặt phòng từ context
-  console.log("Thông tin đặt phòng:", booking);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -58,6 +58,34 @@ function BookingInfo() {
     bookingMutation.mutate(booking); // Truyền dữ liệu booking vào đây
   };
 
+  const handlePayPayment = async () => {
+    const amount = booking.finalPrice; // Số tiền cần thanh toán
+    const userId = booking.user; // ID người dùng
+    const bankCode = "NCB";
+    const orderInfo = `Thanh toán đặt phòng cho ${booking.propertyName}`;
+    localStorage.setItem("pendingBooking", JSON.stringify(booking));
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/payment/vnpay/create", // URL backend của bạn
+        {
+          amount,
+          userId,
+          bankCode,
+          orderInfo,
+        }
+      );
+
+      console.log("Response from VNPay:", response);
+      if (response.data.data?.paymentUrl) {
+        window.location.href = response.data.data.paymentUrl;
+      } else {
+        message.error("Không thể tạo liên kết thanh toán.");
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo thanh toán VNPay:", error);
+      alert(error);
+    }
+  };
   return (
     <div>
       <div className="w-full px-6 pd-8">
@@ -94,7 +122,7 @@ function BookingInfo() {
                       <Button
                         type="primary"
                         onClick={() => {
-                          nextStep(); // Tiếp tục nếu không phải VNPay
+                          nextStep();
                         }}
                       >
                         Đi đến bước cuối cùng
@@ -196,9 +224,20 @@ function BookingInfo() {
                       <Button className="mr-4" onClick={preStep}>
                         Quay lại
                       </Button>
-                      <Button type="primary" onClick={handleConfirm}>
-                        Xác nhận đặt phòng
-                      </Button>
+                      {booking.paymentMethod === 2 ? (
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            handlePayPayment();
+                          }}
+                        >
+                          Thanh toán và đặt phòng
+                        </Button>
+                      ) : (
+                        <Button type="primary" onClick={handleConfirm}>
+                          Xác nhận đặt phòng
+                        </Button>
+                      )}
                     </div>
                     <Modal
                       title="Chính sách đặt phòng"

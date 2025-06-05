@@ -25,11 +25,8 @@ const GoogleCallback = () => {
       const userData = jwtDecode(token);
       localStorage.setItem("userId", userData._id); // hoặc _id tùy payload
       localStorage.setItem("email", userData.email);
-
-      message.success("Đăng nhập Google thành công!");
       navigate("/");
     } else {
-      message.error("Đăng nhập Google thất bại!");
       navigate("/login");
     }
   }, [token, decodedUser]);
