@@ -1,4 +1,3 @@
-import React from "react";
 import VietnamDestinations from "../../components/Destinations/VietnamDestination";
 import SearchByType from "../../components/SearchByType/SearchByType";
 import PropertyList from "../../components/Property/PropertyList";
@@ -6,6 +5,7 @@ import ForeignDestiantion from "../../components/Destinations/ForeignDestination
 import Explore from "../../components/Home/Explore";
 import useCategory from "../../hooks/useCategory";
 import { FloatButton } from "antd";
+import Chatbot from "../../components/Chatbot/Chatbot";
 function HomePage() {
   const {
     data: categoryData,
@@ -24,7 +24,8 @@ function HomePage() {
       <ForeignDestiantion />
       <PropertyList />
       <Explore />
-      <FloatButton.BackTop visibilityHeight={0} />
+      <Chatbot />
+      {/* <FloatButton.BackTop visibilityHeight={0} /> */}
     </div>
   );
 }
