@@ -1,5 +1,5 @@
 import { Button, Typography, DatePicker, Row, Col, message, Spin } from "antd";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useBooking } from "../../contexts/BookingContext";
 import useAvailableRooms from "../../hooks/useAvailableRooms";
 import { useParams } from "react-router-dom";
@@ -7,11 +7,13 @@ import RoomTable from "./RoomTable";
 import RoomModal from "../Modal/RoomModal";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 const AvailableRooms = ({ dataSource }) => {
   const { id } = useParams();
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const { updateBooking } = useBooking(); // Gọi từ context
   const [checkInDate, setcheckInDate] = useState(dayjs().add(1, "day")); // Ngày mai
@@ -46,6 +48,11 @@ const AvailableRooms = ({ dataSource }) => {
     );
   };
   const handleConfirmBooking = () => {
+    if (!user) {
+      message.error("Vui lòng đăng nhập để đặt phòng");
+      return;
+    }
+
     const selectedRooms = rooms
       .filter((room) => room.selectedQuantity > 0)
       .map((room) => ({

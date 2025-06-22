@@ -7,18 +7,18 @@ const ButtonDetail = ({ hotel }) => {
   const navigate = useNavigate();
 
   const handleViewDetail = () => {
-    if (user) {
-      if (!hotel || !hotel._id) {
-        message.destroy();
-        message.error("Lỗi: Không tìm thấy thông tin khách sạn!");
-        return;
-      }
-
-      navigate(`/property/${hotel._id}`);
-    } else {
+    // if (user) {
+    if (!hotel || !hotel._id) {
       message.destroy();
-      message.error("Vui lòng đăng nhập để xem chi tiết");
+      message.error("Lỗi: Không tìm thấy thông tin khách sạn!");
+      return;
     }
+
+    navigate(`/property/${hotel._id}`);
+    // } else {
+    //   message.destroy();
+    //   message.error("Vui lòng đăng nhập để xem chi tiết");
+    // }
   };
 
   return (

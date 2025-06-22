@@ -17,4 +17,5 @@ const useRoomByProperty = (id) => {
     queryFn: () => getRoomByProperty(id),
   });
 };
+
 export default useRoomByProperty;

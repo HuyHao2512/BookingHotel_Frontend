@@ -18,7 +18,7 @@ const RoomTable = ({ rooms, handleQuantityChange, showRoomInfo }) => {
       render: (text, record) => (
         <InputNumber
           min={0}
-          max={record.quantity}
+          max={record.availableRoomCount || record.quantity}
           value={record.selectedQuantity}
           onChange={(value) => handleQuantityChange(value, record)}
         />

@@ -9,11 +9,11 @@ function PropertyCard({ hotel }) {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleViewDetail = (hotel) => {
-    if (user) {
-      navigate(`/property/${hotel._id}`);
-    } else {
-      message.error("Vui lòng đăng nhập để xem chi tiết");
-    }
+    // if (user) {
+    navigate(`/property/${hotel._id}`);
+    // } else {
+    //   message.error("Vui lòng đăng nhập để xem chi tiết");
+    // }
   };
 
   return (

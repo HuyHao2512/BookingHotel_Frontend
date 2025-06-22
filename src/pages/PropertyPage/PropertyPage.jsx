@@ -60,11 +60,11 @@ const PropertyPage = () => {
             items={[
               { key: "part-1", href: "#part-1", title: "Tổng quan" },
               {
-                key: "part-2",
-                href: "#part-2",
+                key: "part-3",
+                href: "#part-3",
                 title: "Thông tin & tiện ích",
               },
-              { key: "part-3", href: "#part-3", title: "Thông tin phòng" },
+              { key: "part-2", href: "#part-2", title: "Thông tin phòng" },
               { key: "part-4", href: "#part-4", title: "Đánh giá" },
             ]}
             className="w-full flex justify-around"
@@ -125,6 +125,9 @@ const PropertyPage = () => {
           </Row>
         </div>
         <div id="part-2" className="w-full h-full mt-4">
+          <AvailableRooms dataSource={rooms} />
+        </div>
+        <div id="part-3" className="w-full h-full mt-4">
           <Row>
             <Col span={18}>
               <p className="whitespace-pre-line mt-8 mb-8 font-beVietnam leading-relaxed text-gray-600">
@@ -136,9 +139,6 @@ const PropertyPage = () => {
               <PropertyAmenities amenities={property.amenities} />
             </Col>
           </Row>
-        </div>
-        <div id="part-3" className="w-full h-full mt-4">
-          <AvailableRooms dataSource={rooms} />
         </div>
         <div id="part-4" className="w-full h-full mt-16">
           <h1 className="text-2xl font-bold mb-4">Đánh giá của khách</h1>
