@@ -8,20 +8,18 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import useFindByOwner from "../../hooks/useFindByOwner";
 import { useQuery } from "@tanstack/react-query";
 import * as ownerService from "../../services/owner.service";
+import { useParams } from "react-router-dom";
 const { Content } = Layout;
 const Dashboard = () => {
-  const { data: propertyData } = useFindByOwner();
-  const propertyId = propertyData?.data[0]?._id; // Lấy propertyId từ dữ liệu chủ nhà
+  const { id } = useParams();
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["propertyRevenue", propertyId],
-    queryFn: () => ownerService.getRevenue(propertyId),
+    queryKey: ["propertyRevenue", id],
+    queryFn: () => ownerService.getRevenue(id),
   });
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading data</div>;
-  console.log("data", data.data);
   const transformedData = Object.entries(data.data).map(([month, values]) => ({
     name: month,
     totalBookings: values.totalBookings,

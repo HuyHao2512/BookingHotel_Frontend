@@ -22,7 +22,7 @@ const LoginForm = ({ toggleForm }) => {
         if (userData.roles.includes("admin")) {
           window.location.href = "/admin/dashboard";
         } else if (userData.roles.includes("owner")) {
-          window.location.href = "/owner/dashboard";
+          window.location.href = "/mananger";
         } else {
           window.location.href = "/";
         }

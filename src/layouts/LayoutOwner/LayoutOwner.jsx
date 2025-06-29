@@ -9,7 +9,12 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme, message } from "antd";
-import { BrowserRouter as Router, useNavigate, Outlet } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  useNavigate,
+  Outlet,
+  useParams,
+} from "react-router-dom";
 import * as authService from "../../services/auth.service";
 import { useMutation } from "@tanstack/react-query";
 const { Header, Sider, Content } = Layout;
@@ -17,6 +22,7 @@ const { Header, Sider, Content } = Layout;
 function LayoutOwner() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const { id } = useParams();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -57,28 +63,33 @@ function LayoutOwner() {
         <Menu
           theme="light"
           mode="inline"
-          defaultSelectedKeys={["/owner"]}
+          selectedKeys={[location.pathname]}
           onClick={handleMenuClick}
           items={[
             {
-              key: "/owner/dashboard",
+              key: `/owner/${id}/dashboard`,
               icon: <DatabaseOutlined />,
-              label: " Trang quản lý",
+              label: "Trang quản lý",
             },
             {
-              key: "/owner/rooms",
+              key: `/owner/${id}/rooms`,
               icon: <PicLeftOutlined />,
               label: "Danh mục phòng",
             },
             {
-              key: "/owner/booking",
+              key: `/owner/${id}/booking`,
               icon: <FileTextOutlined />,
               label: "Đơn đặt phòng",
             },
             {
-              key: "/owner/discount",
+              key: `/owner/${id}/discount`,
               icon: <AreaChartOutlined />,
               label: "Khuyến mãi",
+            },
+            {
+              key: "/mananger",
+              icon: <DatabaseOutlined />,
+              label: "Quản lý khách sạn",
             },
             {
               key: "logout",

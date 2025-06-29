@@ -16,10 +16,12 @@ import useTypeRoom from "../../hooks/useTypeRoom";
 import useConveniences from "../../hooks/useConveniences";
 import useFindByOwner from "../../hooks/useFindByOwner";
 import * as ownerService from "../../services/owner.service";
+import { useParams } from "react-router-dom";
 const AddRoomModal = ({ isAddRoomModalOpen, handleCancel }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { id } = useParams();
   const {
     data: typeRoomData,
     isLoading: isLoadingTypeRoom,
@@ -55,10 +57,10 @@ const AddRoomModal = ({ isAddRoomModalOpen, handleCancel }) => {
   });
   useEffect(() => {
     if (ownerData && ownerData.data && ownerData.data.length > 0) {
-      setPropertyId(ownerData.data[0]._id);
+      setPropertyId(id);
       setRoomData((prev) => ({
         ...prev,
-        property: ownerData.data[0]._id,
+        property: id,
       }));
     }
   }, [ownerData]);

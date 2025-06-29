@@ -23,6 +23,7 @@ import ListConveniece from "../pages/Admin/ListConvenience";
 import ListCategory from "../pages/Admin/ListCategory";
 import GoogleCallback from "../pages/AuthPage/GoogleCallback";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+import ManangerPage from "../pages/Owner/ManangerPage";
 
 export const routes = [
   {
@@ -120,7 +121,7 @@ export const routes = [
     ],
   },
   {
-    path: "/owner",
+    path: "/owner/:id",
     page: LayoutOwner,
     isShowHeader: false,
     children: [
@@ -141,5 +142,9 @@ export const routes = [
         page: Discount,
       },
     ],
+  },
+  {
+    path: "/mananger",
+    page: ManangerPage,
   },
 ];

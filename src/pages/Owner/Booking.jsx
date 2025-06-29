@@ -5,21 +5,18 @@ import useFindByOwner from "../../hooks/useFindByOwner";
 import useBookingByProperty from "../../hooks/useBookingByProperty";
 import * as ownerService from "../../services/owner.service"; // Giả sử có service để gọi API
 import { message } from "antd";
+import { useParams } from "react-router-dom";
 
 const Booking = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const {
-    data: ownerData,
-    isLoading: isLoadingOwner,
-    isError: isErrorOwner,
-  } = useFindByOwner();
+  const { id } = useParams();
   const {
     data: bookingsData,
     isLoading,
     isError,
     refetch, // Thêm refetch để cập nhật dữ liệu sau khi thay đổi trạng thái
-  } = useBookingByProperty(ownerData?.data[0]?._id);
+  } = useBookingByProperty(id);
   // Hàm định dạng ngày giờ
   const formatDate = (isoDate) => {
     if (!isoDate) return "N/A";
@@ -73,8 +70,8 @@ const Booking = () => {
     cancelMutation.mutate(id, "cancelled");
   };
 
-  if (isLoading || isLoadingOwner) return <p>Loading...</p>;
-  if (isError || isErrorOwner) return <p>Có lỗi xảy ra</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Có lỗi xảy ra</p>;
 
   const columns = [
     {

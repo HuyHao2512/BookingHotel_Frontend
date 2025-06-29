@@ -3,16 +3,16 @@ import { useState, useEffect } from "react";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import AddRoomModal from "../../components/Modal/AddRoomModal";
 import UpdateRoomModal from "../../components/Modal/UpdateRoomModal";
-import useFindByOwner from "../../hooks/useFindByOwner";
 import useListRoomByOwner from "../../hooks/useListRoomByOwner";
 import { updateRoomStatus } from "../../services/owner.service";
+import { useParams } from "react-router-dom";
 
 const ListRoom = () => {
   const [isAddRoomModalOpen, setIsAddRoomModalOpen] = useState(false);
   const [isUpdateRoomModalOpen, setIsUpdateRoomModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const { data: ownerData } = useFindByOwner();
-  const { data: rooms } = useListRoomByOwner(ownerData?.data[0]?._id);
+  const { id } = useParams();
+  const { data: rooms } = useListRoomByOwner(id);
   const [dataSource, setDataSource] = useState([]);
   useEffect(() => {
     if (rooms) {
