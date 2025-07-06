@@ -31,7 +31,7 @@ function ManagerPage() {
   };
 
   const handleManage = (hotelId) => {
-    navigate(`/owner/${hotelId}/dashboard`);
+    navigate(`/owner/${hotelId}/information`);
   };
 
   const handleAddHotel = () => {

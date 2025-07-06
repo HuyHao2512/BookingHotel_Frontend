@@ -7,6 +7,8 @@ import {
   PicLeftOutlined,
   LogoutOutlined,
   FileTextOutlined,
+  AlignLeftOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme, message } from "antd";
 import {
@@ -67,9 +69,14 @@ function LayoutOwner() {
           onClick={handleMenuClick}
           items={[
             {
+              key: `/owner/${id}/information`,
+              icon: <InfoCircleOutlined />,
+              label: "Thông tin nơi lưu trú",
+            },
+            {
               key: `/owner/${id}/dashboard`,
               icon: <DatabaseOutlined />,
-              label: "Trang quản lý",
+              label: "Thống kê",
             },
             {
               key: `/owner/${id}/rooms`,
@@ -88,7 +95,7 @@ function LayoutOwner() {
             },
             {
               key: "/mananger",
-              icon: <DatabaseOutlined />,
+              icon: <AlignLeftOutlined />,
               label: "Quản lý khách sạn",
             },
             {

@@ -126,3 +126,19 @@ export const getReviews = async (id) => {
   const res = await instance.get(`/reviews/property/${id}`);
   return res;
 };
+
+export const getCodeDiscount = async (code) => {
+  const res = await axios.get(`${URL}/discounts/${code}`);
+  return res;
+};
+
+export const updateActive = async (code, isActive) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.put(`${URL}/discounts/${code}`, isActive, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return res;
+};

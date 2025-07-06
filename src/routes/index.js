@@ -24,6 +24,7 @@ import ListCategory from "../pages/Admin/ListCategory";
 import GoogleCallback from "../pages/AuthPage/GoogleCallback";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import ManangerPage from "../pages/Owner/ManangerPage";
+import Information from "../pages/Owner/Information";
 
 export const routes = [
   {
@@ -125,6 +126,10 @@ export const routes = [
     page: LayoutOwner,
     isShowHeader: false,
     children: [
+      {
+        path: "information",
+        page: Information,
+      },
       {
         path: "dashboard",
         page: Dashboard,

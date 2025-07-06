@@ -7,110 +7,137 @@ import {
   InputNumber,
   DatePicker,
   Tag,
+  Switch,
+  message,
 } from "antd";
 import { useState } from "react";
 import dayjs from "dayjs";
-
-const sampleDiscounts = [
-  { id: 1, code: "SALE10", discount: 10, expiry: "2025-03-31", active: false },
-  {
-    id: 2,
-    code: "WELCOME20",
-    discount: 20,
-    expiry: "2025-04-15",
-    active: false,
-  },
-  {
-    id: 3,
-    code: "SPRING30",
-    discount: 30,
-    expiry: "2025-02-28",
-    active: false,
-  },
-];
+import * as ownwerService from "../../services/owner.service";
+import { useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Discount = () => {
-  const [discounts, setDiscounts] = useState(sampleDiscounts);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingDiscount, setEditingDiscount] = useState(null);
+  const { id } = useParams();
   const [form] = Form.useForm();
+  const queryClient = useQueryClient();
+  const [switchLoading, setSwitchLoading] = useState({}); // NEW
 
-  const showModal = (discount) => {
-    setEditingDiscount(discount);
+  // Mutation tạo mã giảm giá
+  const mutation = useMutation({
+    mutationFn: (data) =>
+      ownwerService.createDiscount({
+        ...data,
+        propertyId: id,
+        isActive: true,
+      }),
+    onSuccess: () => {
+      form.resetFields();
+      setIsModalOpen(false);
+      message.success("Thêm mã giảm giá thành công");
+      queryClient.invalidateQueries(["discounts", id]);
+    },
+    onError: (error) => {
+      console.error("Error adding discount:", error);
+      message.error("Thêm mã giảm giá thất bại");
+    },
+  });
+
+  // Mutation cập nhật trạng thái isActive
+  const toggleActiveMutation = useMutation({
+    mutationFn: ({ code, isActive }) =>
+      ownwerService.updateDiscount(code, { isActive }),
+    onSuccess: () => {
+      message.destroy();
+      message.success("Cập nhật trạng thái thành công");
+      queryClient.invalidateQueries(["discounts", id]);
+    },
+    onError: () => {
+      message.error("Cập nhật trạng thái thất bại");
+    },
+  });
+
+  // Lấy danh sách mã giảm giá
+  const {
+    isError,
+    isLoading,
+    data: discounts,
+  } = useQuery({
+    queryKey: ["discounts", id],
+    queryFn: () => ownwerService.getDiscountByProperty(id),
+  });
+
+  const showModal = () => {
     setIsModalOpen(true);
-    form.setFieldsValue(
-      discount
-        ? { ...discount, expiry: moment(discount.expiry) }
-        : { code: "", discount: 0, expiry: null, active: true }
-    );
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setEditingDiscount(null);
   };
 
-  const handleSave = () => {
-    form.validateFields().then((values) => {
-      const newDiscount = {
-        ...values,
-        id: editingDiscount ? editingDiscount.id : discounts.length + 1,
-      };
-      if (editingDiscount) {
-        setDiscounts((prev) =>
-          prev.map((d) => (d.id === editingDiscount.id ? newDiscount : d))
-        );
-      } else {
-        setDiscounts((prev) => [...prev, newDiscount]);
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields();
+      mutation.mutate({
+        code: values.code,
+        percentage: values.discount,
+        expireDate: dayjs(values.expiry).format("YYYY-MM-DD"),
+      });
+    } catch (err) {
+      console.log("Validation failed:", err);
+    }
+  };
+
+  const handleToggleActive = (code, isActive) => {
+    // Bắt đầu loading cho switch tương ứng
+    setSwitchLoading((prev) => ({ ...prev, [code]: true }));
+
+    toggleActiveMutation.mutate(
+      { code, isActive },
+      {
+        onSettled: () => {
+          // Kết thúc loading bất kể thành công hay thất bại
+          setSwitchLoading((prev) => ({ ...prev, [code]: false }));
+        },
       }
-      setIsModalOpen(false);
-      setEditingDiscount(null);
-    });
-  };
-
-  const handleDelete = (id) => {
-    setDiscounts((prev) => prev.filter((d) => d.id !== id));
+    );
   };
 
   const columns = [
     { title: "Mã giảm giá", dataIndex: "code", key: "code" },
-    { title: "Giảm giá (%)", dataIndex: "discount", key: "discount" },
-    { title: "Ngày hết hạn", dataIndex: "expiry", key: "expiry" },
+    { title: "Giảm giá (%)", dataIndex: "percentage", key: "percentage" },
     {
-      title: "Trạng thái",
-      dataIndex: "active",
-      key: "active",
-      render: (active) => (
-        <Tag color={active ? "green" : "red"}>
-          {active ? "Hoạt động" : "Hết hạn"}
-        </Tag>
-      ),
+      title: "Ngày hết hạn",
+      dataIndex: "expireDate",
+      key: "expireDate",
+      render: (date) => dayjs(date).format("DD-MM-YYYY"),
     },
     {
       title: "Hành động",
       key: "action",
       render: (_, record) => (
-        <div className="space-x-2">
-          <Button onClick={() => showModal(record)}>Sửa</Button>
-          <Button onClick={() => handleDelete(record.id)} danger>
-            Xóa
-          </Button>
-        </div>
+        <Switch
+          checked={record.isActive}
+          loading={switchLoading[record.code]} // Loading theo từng mã
+          onChange={(checked) => handleToggleActive(record.code, checked)}
+        />
       ),
     },
   ];
 
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading discounts</div>;
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Quản lý mã giảm giá</h2>
-      <Button type="primary" onClick={() => showModal(null)} className="mb-4">
+      <Button type="primary" onClick={showModal} className="mb-4">
         Thêm mã giảm giá
       </Button>
-      <Table columns={columns} dataSource={discounts} rowKey="id" />
+      <Table columns={columns} dataSource={discounts.data} rowKey="id" />
 
-      {/* Modal thêm/sửa mã giảm giá */}
       <Modal
-        title={editingDiscount ? "Chỉnh sửa mã giảm giá" : "Thêm mã giảm giá"}
+        title={"Thêm mã giảm giá"}
         open={isModalOpen}
         onCancel={handleCancel}
         onOk={handleSave}
@@ -135,7 +162,7 @@ const Discount = () => {
             label="Ngày hết hạn"
             rules={[{ required: true, message: "Chọn ngày hết hạn" }]}
           >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+            <DatePicker format="MM-DD-YYYY" style={{ width: "100%" }} />
           </Form.Item>
         </Form>
       </Modal>

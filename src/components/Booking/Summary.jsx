@@ -7,7 +7,7 @@ const Summary = ({ booking }) => {
   const total = booking.rooms.reduce((acc, room) => {
     return acc + room.price * room.quantity;
   }, 0);
-  const finalPrice = total + 20000;
+  const finalPrice = total;
   useEffect(() => {
     updateBooking({ totalPrice: total, finalPrice: finalPrice });
   }, [total]);
@@ -47,17 +47,19 @@ const Summary = ({ booking }) => {
           <span>{booking.checkOut}</span>
         </p>
         <hr />
-        <p className="flex justify-between mt-3 ">
+        <p className="flex justify-between mt-3">
           <span>Giảm giá:</span>
-          <span>0đ</span>
+          <span>{booking.discount || 0} %</span>
         </p>
-        <p className="flex justify-between mt-3 ">
-          <span>Thuế:</span>
-          <span>20.000đ</span>
-        </p>
-        <p className="flex justify-between mt-3 ">
+
+        <p className="flex justify-between mt-3 font-semibold">
           <span>Tổng cộng:</span>
-          <span>{new Intl.NumberFormat("vi-VN").format(finalPrice)}</span>
+          <span>
+            {new Intl.NumberFormat("vi-VN").format(
+              finalPrice - (finalPrice * (booking.discount || 0)) / 100
+            )}
+            đ
+          </span>
         </p>
       </div>
     </div>

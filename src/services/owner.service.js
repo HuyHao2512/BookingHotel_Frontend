@@ -145,3 +145,42 @@ export const getRevenue = async (id) => {
   );
   return res;
 };
+
+export const getDiscountByProperty = async (propertyId) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.get(
+    `http://localhost:3000/discounts/property/${propertyId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};
+
+export const createDiscount = async (data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.post("http://localhost:3000/discounts", data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
+
+export const updateDiscount = async (id, data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.patch(
+    `http://localhost:3000/discounts/${id}/is-active`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};

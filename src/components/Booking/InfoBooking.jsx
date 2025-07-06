@@ -1,7 +1,9 @@
-import { Input, Radio, Popover } from "antd";
+import { Input, Radio, Popover, Button, message } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useBooking } from "../../contexts/BookingContext";
+import { useQuery } from "@tanstack/react-query";
+import * as userService from "../../services/user.service";
 
 const InfoBooking = ({ onValidate }) => {
   const { updateBooking } = useBooking();
@@ -11,7 +13,9 @@ const InfoBooking = ({ onValidate }) => {
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
-  const [discount, setDiscount] = useState("");
+  const [discountCode, setDiscountCode] = useState("");
+  const [discount, setDiscount] = useState(null); // Lưu % giảm giá
+  const [isChecking, setIsChecking] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -64,6 +68,25 @@ const InfoBooking = ({ onValidate }) => {
   useEffect(() => {
     validateFields();
   }, [name, email, phone, paymentMethod, onlinePaymentMethod]);
+
+  const handleCheckDiscount = async () => {
+    if (!discountCode.trim()) {
+      message.warning("Vui lòng nhập mã giảm giá");
+      return;
+    }
+
+    setIsChecking(true);
+    try {
+      const response = await userService.getCodeDiscount(discountCode);
+      setDiscount(response.data.percentage); // Lưu kết quả
+      message.success("Áp dụng mã giảm giá thành công");
+    } catch (err) {
+      setDiscount(null);
+      message.error("Mã giảm giá không hợp lệ");
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   return (
     <div className="bg-white border border-blue-200 p-4">
@@ -155,13 +178,19 @@ const InfoBooking = ({ onValidate }) => {
       <div className="mb-4">
         <div className="flex items-center">
           <label className="w-28 font-medium">Mã giảm giá:</label>
-          <div className="flex-1">
+          <div className="flex-1 flex gap-2">
             <Input
-              value={discount}
-              onChange={(e) => setDiscount(e.target.value)}
+              value={discountCode}
+              onChange={(e) => setDiscountCode(e.target.value)}
               placeholder="Nhập mã giảm giá của bạn (nếu có)"
               className="border p-2 rounded w-full"
             />
+            <Button
+              onClick={handleCheckDiscount}
+              className="whitespace-nowrap h-[40px] bg-blue-500 text-white"
+            >
+              Kiểm tra
+            </Button>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useBooking } from "../../contexts/BookingContext"; // Import context
 import StepsComponent from "../../components/Booking/StepsComponent";
 import BookingDetails from "../../components/Booking/BookingDetails";
@@ -86,6 +86,30 @@ function BookingInfo() {
       alert(error);
     }
   };
+
+  useEffect(() => {
+    const hasReloaded = sessionStorage.getItem("force-back");
+
+    if (hasReloaded === "true") {
+      sessionStorage.removeItem("force-back");
+      history.back(); // 👈 tự động quay lại trang trước
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      sessionStorage.setItem("force-back", "true");
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <div>
       <div className="w-full px-6 pd-8">
