@@ -38,7 +38,7 @@ const SidebarFilter = ({ setFilters }) => {
   };
 
   // Hàm xử lý khi nhấn "Áp dụng" (cập nhật URL và gửi bộ lọc ra ngoài)
-  const applyFilter = () => {
+  const handleApplyFilter = () => {
     // Cập nhật URL
     const params = new URLSearchParams();
     if (selectedAmenities.length)
@@ -132,7 +132,7 @@ const SidebarFilter = ({ setFilters }) => {
       <Button
         type="primary"
         className="w-full mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
-        onClick={applyFilter}
+        onClick={handleApplyFilter}
       >
         Áp dụng
       </Button>

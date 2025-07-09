@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Image, Modal } from "antd";
 
 const ImageModal = ({ isVisible, handleClose, images }) => {
   return (
@@ -7,15 +7,17 @@ const ImageModal = ({ isVisible, handleClose, images }) => {
       open={isVisible}
       footer={null}
       onCancel={handleClose}
-      width={800}
+      width={1200}
     >
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {images.map((img, index) => (
-          <img
+          <Image
             key={index}
             src={img}
             alt={`Full Gallery ${index}`}
-            className="w-full h-60 object-cover rounded-lg"
+            height="100%"
+            width="100%"
+            style={{ objectFit: "cover" }}
           />
         ))}
       </div>
