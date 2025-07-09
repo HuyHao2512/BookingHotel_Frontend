@@ -287,8 +287,8 @@
 // };
 
 // export default UpdateRoomModal;
-import React, { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Modal,
   Form,
@@ -308,6 +308,7 @@ import useFindByOwner from "../../hooks/useFindByOwner";
 import * as ownerService from "../../services/owner.service";
 
 const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
+  const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [removeImageIds, setRemoveImageIds] = useState([]); // State mới để lưu publicId của ảnh cần xóa
@@ -324,7 +325,6 @@ const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
     conveniences: [],
     price: "",
     isAvailable: true,
-    quantity: "",
     area: "",
     capacity: "",
     bed: "",
@@ -372,6 +372,7 @@ const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
         area: room.area,
         capacity: room.capacity,
         bed: room.bed,
+        totalRoom: room.totalRoom,
         direction: room.direction,
         conveniences: conveniencesIds,
       });
@@ -395,6 +396,9 @@ const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
     onSuccess: () => {
       message.success("Cập nhật phòng thành công!");
       handleCancel();
+      setFileList([]); // Reset fileList sau khi cập nhật thành công
+      setRemoveImageIds([]); // Reset danh sách ảnh cần xóa
+      queryClient.invalidateQueries(["rooms", room._id]); // Cập nhật lại dữ liệu
     },
     onError: (error) => {
       console.error("Lỗi khi cập nhật phòng:", error);
@@ -424,7 +428,7 @@ const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
       !roomData.name ||
       !roomData.typeroom ||
       !roomData.price ||
-      !roomData.quantity ||
+      !roomData.totalRoom ||
       !roomData.area ||
       !roomData.capacity ||
       !roomData.bed ||
@@ -468,7 +472,6 @@ const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
       onSettled: () => setIsSubmitting(false),
     });
   };
-
   return (
     <Modal
       title="Cập Nhật Phòng"
@@ -493,7 +496,44 @@ const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
           >
             <Input name="name" onChange={handleChange} />
           </Form.Item>
-          {/* Các field khác như typeroom, price, quantity... */}
+          <Form.Item
+            label="Loại Phòng"
+            name="typeroom"
+            rules={[{ required: true, message: "Chọn loại phòng!" }]}
+          >
+            <Select
+              placeholder="Chọn loại phòng"
+              onChange={(value) =>
+                setRoomData({ ...roomData, typeroom: value })
+              }
+            >
+              {isLoadingTypeRoom ? (
+                <Select.Option disabled>Đang tải...</Select.Option>
+              ) : (
+                typeRoomData?.map((type) => (
+                  <Select.Option key={type._id} value={type._id}>
+                    {type.name}
+                  </Select.Option>
+                ))
+              )}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="Giá (VND)"
+            name="price"
+            rules={[{ required: true, message: "Nhập giá phòng!" }]}
+          >
+            <Input type="number" name="price" onChange={handleChange} />
+          </Form.Item>
+
+          <Form.Item
+            label="Số Lượng"
+            name="totalRoom"
+            rules={[{ required: true, message: "Nhập số lượng!" }]}
+          >
+            <Input type="number" name="totalRoom" onChange={handleChange} />
+          </Form.Item>
         </div>
 
         <Form.Item label="Tiện ích" name="conveniences">
@@ -525,6 +565,10 @@ const UpdateRoomModal = ({ isUpdateRoomModalOpen, handleCancel, room }) => {
             <Select.Option value="Tây">Tây</Select.Option>
             <Select.Option value="Nam">Nam</Select.Option>
             <Select.Option value="Bắc">Bắc</Select.Option>
+            <Select.Option value="Đông">Đông Nam</Select.Option>
+            <Select.Option value="Tây">Tây Nam </Select.Option>
+            <Select.Option value="Nam">Đông Bắc</Select.Option>
+            <Select.Option value="Bắc">Tây Bắc</Select.Option>
           </Select>
         </Form.Item>
 

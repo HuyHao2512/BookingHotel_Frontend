@@ -5,11 +5,13 @@ import PropertyImages from "../../components/Property/PropertyImages";
 import ImageModal from "../../components/Modal/ImageModal";
 import { EditOutlined } from "@ant-design/icons";
 import { Button } from "antd";
+import UpdatePropertyModal from "../../components/Modal/UpdatePropertyModal";
 
 function Information() {
   const { id } = useParams();
   const { data: hotel, isLoading, isError } = useGetPropertyById(id);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const handleShowAllImages = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
   if (isLoading) return <div>Đang tải...</div>;
@@ -18,7 +20,12 @@ function Information() {
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold text-[#082a5e]">{hotel.name}</h1>
-        <Button icon={<EditOutlined />} type="primary" variant="outline">
+        <Button
+          icon={<EditOutlined />}
+          type="primary"
+          variant="outline"
+          onClick={() => setIsUpdateModalVisible(true)}
+        >
           Chỉnh sửa
         </Button>
       </div>
@@ -40,9 +47,6 @@ function Information() {
         </p>
         <p className="text-gray-600">
           <strong>Điện thoại:</strong> {hotel.phone}
-        </p>
-        <p className="text-gray-600">
-          <strong>Thành phố:</strong> {hotel.city.name}, {hotel.city.country}
         </p>
         <p className="text-gray-600">
           <strong>Loại:</strong> {hotel.category.name}
@@ -91,6 +95,11 @@ function Information() {
         isVisible={isModalVisible}
         handleClose={handleCloseModal}
         images={(hotel?.images || []).map((img) => img.url)}
+      />
+      <UpdatePropertyModal
+        property={hotel}
+        onClose={() => setIsUpdateModalVisible(false)}
+        isVisible={isUpdateModalVisible}
       />
     </div>
   );

@@ -1,12 +1,94 @@
-import { Card, Button, Row, Col, Spin, Empty, Space, message } from "antd";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  Spin,
+  Empty,
+  Space,
+  message,
+  Typography,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import useFindByOwner from "../../hooks/useFindByOwner";
-import * as authService from "../../services/auth.service"; // thêm nếu cần
+import * as authService from "../../services/auth.service";
 import { useMutation } from "@tanstack/react-query";
+import {
+  EnvironmentOutlined,
+  PlusOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
+import styled from "styled-components";
+
+// Styled components for custom styling
+const StyledContainer = styled.div`
+  padding: 32px;
+  background: #f0f2f5;
+  min-height: 100vh;
+`;
+
+const StyledHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+`;
+
+const StyledCard = styled(Card)`
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .ant-card-head {
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .ant-card-body {
+    padding: 16px;
+  }
+`;
+
+const HotelImage = styled.div`
+  width: 100%;
+  height: 150px;
+  background: #e8ecef;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+  background-image: ${({ imageUrl }) =>
+    imageUrl
+      ? `url(${imageUrl})`
+      : `url("https://via.placeholder.com/300x150?text=Hotel+Image")`};
+  background-size: cover;
+  background-position: center;
+`;
+
+const StyledButton = styled(Button)`
+  border-radius: 8px;
+`;
+
+const { Title, Text } = Typography;
 
 function ManagerPage() {
   const navigate = useNavigate();
-
   const { data: ownerData, isLoading, isError } = useFindByOwner();
 
   const logoutMutation = useMutation({
@@ -40,62 +122,77 @@ function ManagerPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[300px]">
-        <Spin size="large" />
-      </div>
+      <StyledContainer>
+        <div className="flex justify-center items-center min-h-[300px]">
+          <Spin size="large" tip="Đang tải dữ liệu..." />
+        </div>
+      </StyledContainer>
     );
   }
 
   if (isError || !ownerData || !ownerData.data?.length) {
     return (
-      <div className="flex justify-center items-center min-h-[300px]">
-        <Empty description="Không có khách sạn nào" />
-      </div>
+      <StyledContainer>
+        <div className="flex justify-center items-center min-h-[300px]">
+          <Empty description={<Text strong>Không có khách sạn nào</Text>}>
+            <StyledButton type="primary" onClick={handleAddHotel}>
+              <PlusOutlined /> Thêm khách sạn
+            </StyledButton>
+          </Empty>
+        </div>
+      </StyledContainer>
     );
   }
 
   return (
-    <div style={{ padding: 24 }}>
+    <StyledContainer>
       {/* Thanh điều hướng */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
-        <h1 style={{ fontSize: 24 }}>Danh sách khách sạn của bạn</h1>
+      <StyledHeader>
+        <Title level={2} style={{ margin: 0, color: "#1a1a1a" }}>
+          Danh sách khách sạn của bạn
+        </Title>
         <Space>
-          <Button type="primary" onClick={handleAddHotel}>
-            ➕ Thêm khách sạn
-          </Button>
-          <Button danger onClick={handleLogout}>
-            🚪 Đăng xuất
-          </Button>
+          <StyledButton type="primary" onClick={handleAddHotel}>
+            <PlusOutlined /> Thêm khách sạn
+          </StyledButton>
+          <StyledButton danger onClick={handleLogout}>
+            <LogoutOutlined /> Đăng xuất
+          </StyledButton>
         </Space>
-      </div>
+      </StyledHeader>
 
       {/* Danh sách khách sạn */}
-      <Row gutter={[16, 16]}>
+      <Row gutter={[24, 24]}>
         {ownerData.data.map((hotel) => (
           <Col key={hotel._id} xs={24} sm={12} md={8} lg={6}>
-            <Card
+            <StyledCard
               title={hotel.name}
-              bordered
+              bordered={false}
               hoverable
               extra={
-                <Button type="primary" onClick={() => handleManage(hotel._id)}>
+                <StyledButton
+                  type="primary"
+                  onClick={() => handleManage(hotel._id)}
+                >
                   Quản lý
-                </Button>
+                </StyledButton>
               }
             >
-              <p>Địa chỉ: {hotel.address}</p>
-            </Card>
+              <HotelImage
+                imageUrl={
+                  hotel.images && hotel.images.length > 0
+                    ? hotel.images[0].url
+                    : null
+                }
+              />
+              <Text>
+                <EnvironmentOutlined /> {hotel.address}
+              </Text>
+            </StyledCard>
           </Col>
         ))}
       </Row>
-    </div>
+    </StyledContainer>
   );
 }
 

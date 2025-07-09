@@ -61,16 +61,6 @@ const ListRoom = () => {
       render: (price) => price.toLocaleString(),
     },
     {
-      title: "Trạng thái",
-      dataIndex: "quantity",
-      key: "status",
-      render: (quantity) => (
-        <Tag color={quantity > 0 ? "green" : "red"}>
-          {quantity > 0 ? "Còn phòng" : "Hết phòng"}
-        </Tag>
-      ),
-    },
-    {
       title: "Chỉnh sửa",
       key: "action",
       render: (_, record) => (

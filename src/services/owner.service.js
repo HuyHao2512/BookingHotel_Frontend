@@ -184,3 +184,15 @@ export const updateDiscount = async (id, data) => {
   );
   return res;
 };
+
+export const updateProperty = async (id, data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.put(`http://localhost:3000/property/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log(res);
+  return res;
+};
