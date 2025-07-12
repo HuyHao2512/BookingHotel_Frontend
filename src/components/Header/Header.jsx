@@ -62,7 +62,7 @@ const Header = () => {
             <ButtonAccount />
           ) : (
             <Link to="/login">
-              <ButtonLogin label="Đăng nhập" />
+              <ButtonLogin label="Đăng nhậ" />
             </Link>
           )}
         </div>
