@@ -2,8 +2,9 @@ import { Input, Radio, Popover, Button, message } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useBooking } from "../../contexts/BookingContext";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as userService from "../../services/user.service";
+import { use } from "react";
 
 const InfoBooking = ({ onValidate }) => {
   const { updateBooking } = useBooking();
@@ -27,6 +28,7 @@ const InfoBooking = ({ onValidate }) => {
       discount,
       paymentMethod,
       onlinePaymentMethod,
+      discountCode,
     });
   }, [
     name,
@@ -36,6 +38,7 @@ const InfoBooking = ({ onValidate }) => {
     discount,
     paymentMethod,
     onlinePaymentMethod,
+    discountCode,
   ]);
 
   const validateFields = () => {
@@ -69,23 +72,27 @@ const InfoBooking = ({ onValidate }) => {
     validateFields();
   }, [name, email, phone, paymentMethod, onlinePaymentMethod]);
 
+  const discountMutation = useMutation({
+    mutationFn: (data) => userService.checkDiscount(data),
+    onSuccess: (data) => {
+      message.success("Mã giảm giá hợp lệ");
+      setDiscount(data.data.discount.percentage);
+    },
+    onError: (error) => {
+      console.log("Error:", error);
+      message.error(error.response.data.message || "Mã giảm giá không hợp lệ");
+      setDiscount(null); // Reset discount nếu không hợp lệ
+    },
+  });
   const handleCheckDiscount = async () => {
     if (!discountCode.trim()) {
       message.warning("Vui lòng nhập mã giảm giá");
       return;
     }
-
-    setIsChecking(true);
-    try {
-      const response = await userService.getCodeDiscount(discountCode);
-      setDiscount(response.data.percentage); // Lưu kết quả
-      message.success("Áp dụng mã giảm giá thành công");
-    } catch (err) {
-      setDiscount(null);
-      message.error("Mã giảm giá không hợp lệ");
-    } finally {
-      setIsChecking(false);
-    }
+    discountMutation.mutate({
+      code: discountCode,
+      userId: localStorage.getItem("userId"),
+    });
   };
 
   return (

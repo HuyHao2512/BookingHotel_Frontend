@@ -12,8 +12,8 @@ function PaymentSuccess() {
     mutationFn: (booking) => userServices.bookingRoom(booking),
     onSuccess: (data) => {
       console.log("Đặt phòng thành công", data);
-      message.success("Đặt phòng thành công, vui lòng kiểm tra email của bạn!");
-      window.location.href = "/";
+      // Xoá dữ liệu đã dùng
+      localStorage.removeItem("pendingBooking");
     },
     onError: (error) => {
       console.log("Đặt phòng thất bại", error);
@@ -22,8 +22,12 @@ function PaymentSuccess() {
   });
 
   const handleGoHome = () => {
-    navigate("/");
+    if (!booking) {
+      message.error("Không tìm thấy thông tin đặt phòng!");
+      return;
+    }
     bookingMutation.mutate(booking);
+    navigate("/");
   };
 
   return (

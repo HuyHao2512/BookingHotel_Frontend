@@ -18,7 +18,7 @@ function PropertyCard({ hotel }) {
 
   return (
     <div className="rounded-xl overflow-hidden w-76 mb-8 flex items-center justify-center">
-      <div className="group transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl mt-2">
+      <div className="group transition-all duration-300 ease-in-out hover:-translate-y-2 mt-2 ">
         <button onClick={() => handleViewDetail(hotel)}>
           <Card
             cover={
@@ -30,7 +30,7 @@ function PropertyCard({ hotel }) {
                 />
               </div>
             }
-            className="w-[300px] border-2 border-blue-500 rounded-lg p-1 border-dashed"
+            className="w-[300px] border-2 rounded-lg p-1"
           >
             <Title level={4} className="line-clamp-2">
               {hotel.name}

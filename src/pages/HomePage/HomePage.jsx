@@ -6,6 +6,7 @@ import Explore from "../../components/Home/Explore";
 import useCategory from "../../hooks/useCategory";
 import { FloatButton } from "antd";
 import Chatbot from "../../components/Chatbot/Chatbot";
+import DiscountList from "../../components/Discount/DiscountList";
 function HomePage() {
   const {
     data: categoryData,
@@ -22,6 +23,7 @@ function HomePage() {
       />
       <VietnamDestinations />
       <ForeignDestiantion />
+      <DiscountList />
       <PropertyList />
       <Explore />
       <Chatbot />

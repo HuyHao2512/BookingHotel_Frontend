@@ -18,6 +18,7 @@ export const BookingProvider = ({ children }) => {
     description: "",
     paymentMethod: "",
     discount: "",
+    discountCode: "",
     totalPrice: "",
     finalPrice: "",
     isPaid: false,
@@ -25,7 +26,16 @@ export const BookingProvider = ({ children }) => {
 
   // Hàm cập nhật thông tin đặt phòng
   const updateBooking = (newBookingData) => {
-    setBooking((prev) => ({ ...prev, ...newBookingData }));
+    setBooking((prev) => {
+      const merged = { ...prev, ...newBookingData };
+
+      const total = parseFloat(merged.totalPrice) || 0;
+      const discountPercent = parseFloat(merged.discount) || 0;
+
+      const finalPrice = total - (total * discountPercent) / 100;
+
+      return { ...merged, finalPrice };
+    });
   };
 
   return (

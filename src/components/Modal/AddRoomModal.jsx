@@ -17,6 +17,7 @@ import useConveniences from "../../hooks/useConveniences";
 import useFindByOwner from "../../hooks/useFindByOwner";
 import * as ownerService from "../../services/owner.service";
 import { useParams } from "react-router-dom";
+import Loading from "../Loading/Loading";
 const AddRoomModal = ({ isAddRoomModalOpen, handleCancel }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
@@ -171,7 +172,9 @@ const AddRoomModal = ({ isAddRoomModalOpen, handleCancel }) => {
               >
                 {isLoadingTypeRoom && (
                   <Select.Option value="" disabled>
-                    Đang tải danh mục...
+                    <div className="flex justify-center items-center h-64">
+                      <Loading />
+                    </div>
                   </Select.Option>
                 )}
 

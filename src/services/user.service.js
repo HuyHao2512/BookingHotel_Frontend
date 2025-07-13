@@ -127,11 +127,15 @@ export const getReviews = async (id) => {
   return res;
 };
 
-export const getCodeDiscount = async (code) => {
-  const res = await axios.get(`${URL}/discounts/${code}`);
+export const checkDiscount = async (data) => {
+  const res = await axios.post(`${URL}/discounts/verify`, data);
   return res;
 };
 
+export const useDiscount = async (data) => {
+  const res = await axios.post(`${URL}/discounts/apply`, data);
+  return res;
+};
 export const updateActive = async (code, isActive) => {
   const token = localStorage.getItem("accessToken");
   const res = await axios.put(`${URL}/discounts/${code}`, isActive, {
@@ -140,5 +144,10 @@ export const updateActive = async (code, isActive) => {
       "Content-Type": "application/json",
     },
   });
+  return res;
+};
+
+export const getDiscountPublic = async () => {
+  const res = await axios.get(`${URL}/discounts/public`);
   return res;
 };

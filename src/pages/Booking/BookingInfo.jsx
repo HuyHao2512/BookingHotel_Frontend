@@ -46,6 +46,13 @@ function BookingInfo() {
     onSuccess: (data) => {
       console.log("Đặt phòng thành công", data);
       message.success("Đặt phòng thành công, vui lòng kiểm tra email của bạn!");
+      if (booking.discountCode) {
+        applyDiscountMutation.mutate({
+          userId: localStorage.getItem("userId"),
+          code: booking.discountCode,
+        });
+      }
+
       window.location.href = "/";
     },
     onError: (error) => {
@@ -53,14 +60,23 @@ function BookingInfo() {
       message.error("Đặt phòng thất bại, vui lòng thử lại sau!");
     },
   });
-
+  const applyDiscountMutation = useMutation({
+    mutationFn: (data) => userServices.useDiscount(data),
+    onSuccess: (data) => {
+      console.log("Áp dụng mã giảm giá thành công", data);
+    },
+    onError: (error) => {
+      console.log("Error:", error);
+    },
+  });
   const handleConfirm = () => {
-    bookingMutation.mutate(booking); // Truyền dữ liệu booking vào đây
+    bookingMutation.mutate(booking);
   };
-
+  console.log("Booking Info:", booking);
   const handlePayPayment = async () => {
-    const amount = booking.finalPrice; // Số tiền cần thanh toán
-    const userId = booking.user; // ID người dùng
+    const amount = booking.finalPrice;
+    const userId = booking.user;
+
     const bankCode = "NCB";
     const orderInfo = `Thanh toán đặt phòng cho ${booking.propertyName}`;
     localStorage.setItem("pendingBooking", JSON.stringify(booking));
@@ -74,8 +90,12 @@ function BookingInfo() {
           orderInfo,
         }
       );
-
-      console.log("Response from VNPay:", response);
+      if (booking.discountCode) {
+        applyDiscountMutation.mutate({
+          userId: localStorage.getItem("userId"),
+          code: booking.discountCode,
+        });
+      }
       if (response.data.data?.paymentUrl) {
         window.location.href = response.data.data.paymentUrl;
       } else {
@@ -86,29 +106,6 @@ function BookingInfo() {
       alert(error);
     }
   };
-
-  useEffect(() => {
-    const hasReloaded = sessionStorage.getItem("force-back");
-
-    if (hasReloaded === "true") {
-      sessionStorage.removeItem("force-back");
-      history.back(); // 👈 tự động quay lại trang trước
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      sessionStorage.setItem("force-back", "true");
-      e.preventDefault();
-      e.returnValue = "";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
 
   return (
     <div>
@@ -258,8 +255,15 @@ function BookingInfo() {
                           Thanh toán và đặt phòng
                         </Button>
                       ) : (
-                        <Button type="primary" onClick={handleConfirm}>
-                          Xác nhận đặt phòng
+                        <Button
+                          type="primary"
+                          onClick={handleConfirm}
+                          loading={bookingMutation.isPending}
+                          disabled={bookingMutation.isPending}
+                        >
+                          {bookingMutation.isPending
+                            ? "Đang đặt phòng..."
+                            : "Xác nhận đặt phòng"}
                         </Button>
                       )}
                     </div>

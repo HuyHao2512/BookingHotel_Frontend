@@ -18,6 +18,7 @@ import useAmenities from "../../hooks/useAmenities";
 import useCity from "../../hooks/useCity";
 import useCategory from "../../hooks/useCategory";
 import { useParams } from "react-router-dom";
+import Loading from "../Loading/Loading";
 
 export default function UpdatePropertyModal({ property, isVisible, onClose }) {
   const queryClient = useQueryClient();
@@ -220,7 +221,9 @@ export default function UpdatePropertyModal({ property, isVisible, onClose }) {
             >
               {isCategoryLoading ? (
                 <Select.Option value="" disabled>
-                  Đang tải danh mục...
+                  <div className="flex justify-center items-center h-64">
+                    <Loading />
+                  </div>
                 </Select.Option>
               ) : isCategoryError ? (
                 <Select.Option value="" disabled>

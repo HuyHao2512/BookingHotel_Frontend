@@ -73,7 +73,6 @@ const AvailableRooms = ({ dataSource }) => {
       checkOut,
       user: localStorage.getItem("userId"),
     });
-    console.log("Đặt phòng thành công:", selectedRooms);
     navigate("/booking-info");
   };
 

@@ -6,7 +6,7 @@ import ButtonLogin from "../Button/ButtonLogin";
 import ButtonAccount from "../Button/ButtonAccount";
 import useCity from "../../hooks/useCity";
 import { AuthContext } from "../../contexts/AuthContext";
-
+import Loading from "../Loading/Loading";
 const Header = () => {
   const {
     data: cityData,
@@ -25,6 +25,7 @@ const Header = () => {
   const { user } = useContext(AuthContext);
   const [filteredDestinations, setFilteredDestinations] = useState([]);
   const [city, setCity] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   const onChange = (value) => {
     setCity(value);
@@ -35,6 +36,7 @@ const Header = () => {
   }, [destinations]);
 
   const handleSearch = (value) => {
+    setSearchInput(value);
     setFilteredDestinations(
       destinations.filter((destination) =>
         destination.name.toLowerCase().includes(value.toLowerCase())
@@ -42,10 +44,19 @@ const Header = () => {
     );
   };
 
-  const handleSearchSubmit = (city) => {
-    navigate(`/search?cityName=${city}`);
+  const handleSearchSubmit = (value) => {
+    const searchValue = value || searchInput;
+    if (!searchValue) return;
+    navigate(`/search?cityName=${searchValue}`);
+    setCity("");
+    setSearchInput("");
   };
-
+  if (isCityError) {
+    return <div>Error loading cities</div>;
+  }
+  if (isCityLoading) {
+    return <p>Loading</p>;
+  }
   return (
     <header className="bg-[url('/images/bg.webp')] bg-cover bg-center text-blue-200 px-6 py-6 shadow-lg h-[400px] ">
       {/* Top Navigation */}
@@ -62,7 +73,7 @@ const Header = () => {
             <ButtonAccount />
           ) : (
             <Link to="/login">
-              <ButtonLogin label="Đăng nhậ" />
+              <ButtonLogin label="Đăng nhập" />
             </Link>
           )}
         </div>
@@ -94,8 +105,12 @@ const Header = () => {
               padding: "8px",
               boxShadow: "0 2px 4px 0 rgb(0 0 0 / 20%)",
             }}
-            onChange={onChange}
+            onChange={(value) => {
+              onChange(value); // giữ logic cũ nếu có
+              handleSearchSubmit(value); // gọi tìm kiếm luôn
+            }}
             onSearch={handleSearch}
+            value={city}
             loading={isCityLoading}
             options={filteredDestinations.map((destination) => ({
               value: destination.name,
@@ -116,7 +131,7 @@ const Header = () => {
           type="primary"
           className="flex items-center px-8 py-2 rounded-full h-12 w-[160px] justify-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-md"
           onClick={() => handleSearchSubmit(city)}
-          disabled={!city}
+          disabled={!city && !searchInput} // disable nếu cả 2 đều rỗng
         >
           <SearchOutlined className="mr-2 text-lg" />
           Tìm kiếm

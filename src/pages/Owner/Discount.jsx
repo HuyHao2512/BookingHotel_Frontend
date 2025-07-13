@@ -39,7 +39,9 @@ const Discount = () => {
     },
     onError: (error) => {
       console.error("Error adding discount:", error);
-      message.error("Thêm mã giảm giá thất bại");
+      message.error(
+        error?.response?.data?.message || "Thêm mã giảm giá thất bại"
+      );
     },
   });
 
