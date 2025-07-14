@@ -9,7 +9,7 @@ const DiscountCard = ({ discountData }) => {
   };
 
   return (
-    <div className="max-w-sm bg-white rounded-xl shadow-md p-4 border relative flex flex-col gap-2">
+    <div className="max-w-sm bg-white rounded-xl p-4 border relative flex flex-col gap-2">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">

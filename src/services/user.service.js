@@ -151,3 +151,8 @@ export const getDiscountPublic = async () => {
   const res = await axios.get(`${URL}/discounts/public`);
   return res;
 };
+
+export const getAllBanners = async () => {
+  const res = await instance.get("/banner");
+  return res;
+};

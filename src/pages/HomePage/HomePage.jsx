@@ -24,8 +24,9 @@ function HomePage() {
       <VietnamDestinations />
       <ForeignDestiantion />
       <DiscountList />
-      <PropertyList />
       <Explore />
+      <PropertyList />
+
       <Chatbot />
       {/* <FloatButton.BackTop visibilityHeight={0} /> */}
     </div>

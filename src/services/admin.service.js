@@ -109,3 +109,35 @@ export const updateTypeRoom = async (id, data) => {
   );
   return res;
 };
+
+export const createBanner = async (data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.post("http://localhost:3000/banner", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res;
+};
+
+export const updateBanner = async (id, data) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.put(`http://localhost:3000/banner/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res;
+};
+
+export const removeBanner = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.delete(`http://localhost:3000/banner/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};

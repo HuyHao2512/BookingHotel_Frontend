@@ -121,15 +121,15 @@ function ListCity() {
     form.setFieldsValue({
       name: record.name,
       country: record.country,
-      file: [], // ✅ reset Upload rõ ràng
+      file: [],
     });
   };
 
   const uploadProps = {
-    beforeUpload: () => false, // Prevent automatic upload
-    maxCount: 1, // Only allow one file
-    accept: "image/*", // Only accept images
-    listType: "picture-card", // Display as picture card
+    beforeUpload: () => false,
+    maxCount: 1,
+    accept: "image/*",
+    listType: "picture-card",
   };
 
   return (
@@ -189,7 +189,7 @@ function ListCity() {
             getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
           >
             <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+              <Button icon={<UploadOutlined />}></Button>
             </Upload>
           </Form.Item>
         </Form>
