@@ -77,11 +77,13 @@ const DiscountList = () => {
           }}
           onSwiper={setSwiperInstance} // Lưu instance của Swiper vào state
         >
-          {discounts.data.map((discount, index) => (
-            <SwiperSlide key={index} className="cursor-pointer">
-              <DiscountCard discountData={discount} />
-            </SwiperSlide>
-          ))}
+          {discounts.data
+            .filter((discount) => discount.isActive)
+            .map((discount, index) => (
+              <SwiperSlide key={index} className="cursor-pointer">
+                <DiscountCard discountData={discount} />
+              </SwiperSlide>
+            ))}
         </Swiper>
       </div>
     </div>

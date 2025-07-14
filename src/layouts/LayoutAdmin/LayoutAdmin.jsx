@@ -11,6 +11,7 @@ import {
   SlidersOutlined,
   AppstoreOutlined,
   ContainerOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme, message } from "antd";
 import { BrowserRouter as Router, useNavigate, Outlet } from "react-router-dom";
@@ -73,6 +74,11 @@ function LayoutAdmin() {
               label: "Danh sách người dùng",
             },
             {
+              key: "/admin/discount",
+              icon: <BookOutlined />,
+              label: "Danh sách mã giảm giá",
+            },
+            {
               key: "/admin/city",
               icon: <AreaChartOutlined />,
               label: "Khu vực lưu trú",
@@ -91,11 +97,6 @@ function LayoutAdmin() {
               key: "/admin/typeroom",
               icon: <ContainerOutlined />,
               label: "Danh sách loại phòng",
-            },
-            {
-              key: "/admin/category",
-              icon: <AppstoreOutlined />,
-              label: "Danh sách loại lưu trú",
             },
             {
               key: "logout",

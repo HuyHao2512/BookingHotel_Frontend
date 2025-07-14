@@ -37,7 +37,6 @@ const ListUser = () => {
       render: (date) => format(new Date(date), "dd/MM/yyyy HH:mm:ss"), // Format ngày
     },
   ];
-  console.log(data);
   return (
     <div>
       <h2>Danh sách người dùng</h2>

@@ -25,6 +25,7 @@ import GoogleCallback from "../pages/AuthPage/GoogleCallback";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import ManangerPage from "../pages/Owner/ManangerPage";
 import Information from "../pages/Owner/Information";
+import ListDiscountAdmin from "../pages/Admin/ListDiscounyAdmin";
 
 export const routes = [
   {
@@ -118,6 +119,10 @@ export const routes = [
       {
         path: "category",
         page: ListCategory,
+      },
+      {
+        path: "discount",
+        page: ListDiscountAdmin,
       },
     ],
   },
