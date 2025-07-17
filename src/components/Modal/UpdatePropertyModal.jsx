@@ -38,8 +38,7 @@ export default function UpdatePropertyModal({ property, isVisible, onClose }) {
     city: "",
     address: "",
     description: "",
-    long: "",
-    lat: "",
+    googleMapUrl: "",
     amenities: [],
     files: [],
   });
@@ -61,8 +60,7 @@ export default function UpdatePropertyModal({ property, isVisible, onClose }) {
         email: property.email || "",
         address: property.address || "",
         description: property.description || "",
-        long: property.long || "",
-        lat: property.lat || "",
+        googleMapUrl: property.googleMapUrl || "",
         files: property.images || [],
       });
       setAmenities(
@@ -86,8 +84,7 @@ export default function UpdatePropertyModal({ property, isVisible, onClose }) {
             ? item
             : item._id?.toString?.() || item.toString()
         ),
-        long: property.long || "",
-        lat: property.lat || "",
+        googleMapUrl: property.googleMapUrl || "",
       });
       if (property.images) {
         setFileList(
@@ -128,8 +125,7 @@ export default function UpdatePropertyModal({ property, isVisible, onClose }) {
       formData.append("city", propertyData.city || "");
       formData.append("address", propertyData.address || "");
       formData.append("description", propertyData.description || "");
-      formData.append("long", propertyData.long || "");
-      formData.append("lat", propertyData.lat || "");
+      formData.append("googleMapUrl", propertyData.googleMapUrl || "");
 
       if (propertyData.amenities?.length) {
         formData.append("amenities", JSON.stringify(amenities));
@@ -282,22 +278,22 @@ export default function UpdatePropertyModal({ property, isVisible, onClose }) {
           <Form.Item label="Địa chỉ" name="address">
             <Input name="address" onChange={handleChange} />
           </Form.Item>
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Kinh độ" name="long">
-              <Input
-                name="long"
-                onChange={handleChange}
-                placeholder="Nhập kinh độ"
-              />
-            </Form.Item>
-            <Form.Item label="Vĩ độ" name="lat">
-              <Input
-                name="lat"
-                onChange={handleChange}
-                placeholder="Nhập vĩ độ"
-              />
-            </Form.Item>
-          </div>
+          <Form.Item
+            label="URL Google Map"
+            name="googleMapUrl"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập URL Google Map!",
+              },
+            ]}
+          >
+            <Input
+              name="googleMapUrl"
+              placeholder="URL Google Map"
+              onChange={handleChange}
+            />
+          </Form.Item>
           <Form.Item label="Tiện ích" name="amenities">
             {isLoading ? (
               <Spin />

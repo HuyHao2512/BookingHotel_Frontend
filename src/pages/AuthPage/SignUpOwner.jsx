@@ -31,8 +31,7 @@ export default function SignUpOwner() {
     address: "",
     email: localStorage.getItem("email"),
     description: "",
-    long: 0,
-    lat: 0,
+    googleMapUrl: "",
     files: [],
   });
 
@@ -75,8 +74,7 @@ export default function SignUpOwner() {
     formData.append("city", hotelData.city);
     formData.append("address", hotelData.address);
     formData.append("description", hotelData.description);
-    formData.append("long", hotelData.long);
-    formData.append("lat", hotelData.lat);
+    formData.append("googleMapUrl", hotelData.googleMapUrl);
     // Gửi danh sách tiện ích dưới dạng mảng
     const amenitiesString = hotelData.amenities.join(",");
     formData.append("amenities", amenitiesString);
@@ -242,22 +240,8 @@ export default function SignUpOwner() {
               onChange={handleAddressChange}
             />
             <Input
-              type="number"
-              name="long"
-              step="any"
-              min={-180}
-              max={180}
-              placeholder="Kinh độ (nếu có)"
-              onChange={handleChange}
-            />
-
-            <Input
-              type="number"
-              name="lat"
-              step="any"
-              min={-90}
-              max={90}
-              placeholder="Vĩ độ (nếu có)"
+              name="googleMapUrl"
+              placeholder="URL Google Map"
               onChange={handleChange}
             />
           </div>

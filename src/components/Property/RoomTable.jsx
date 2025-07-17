@@ -31,7 +31,7 @@ const RoomTable = ({ rooms, handleQuantityChange, showRoomInfo }) => {
       <Table
         dataSource={rooms}
         columns={columns}
-        pagination={{ pageSize: 2 }}
+        pagination={{ pageSize: 8 }}
       />
     </div>
   );

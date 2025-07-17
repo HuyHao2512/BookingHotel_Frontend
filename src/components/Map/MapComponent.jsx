@@ -1,24 +1,16 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-const MapComponent = ({ latitude, longitude }) => {
-  const defaultLat = 10.762622;
-  const defaultLng = 106.660172;
-
-  const lat = latitude ?? defaultLat;
-  const lng = longitude ?? defaultLng;
+const MapComponent = ({ googleMapUrl }) => {
   const handleViewMap = () => {
-    window.open(
-      `https://www.google.com/maps?q=${latitude},${longitude}`,
-      "_blank"
-    );
+    window.open(`${googleMapUrl}`, "_blank");
   };
 
   return (
     <div className="relative rounded-xl overflow-hidden border border-gray-300 shadow-lg ml-2 mt-2">
       {/* Bản đồ */}
       <MapContainer
-        center={[latitude, longitude]}
+        center={[10.03017, 105.077058]}
         zoom={13}
         style={{
           height: "263px",

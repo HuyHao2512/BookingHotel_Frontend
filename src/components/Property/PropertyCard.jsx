@@ -22,7 +22,7 @@ function PropertyCard({ hotel }) {
         <button onClick={() => handleViewDetail(hotel)}>
           <Card
             cover={
-              <div className="overflow-hidden bg-white p-1 rounded-t-lg border-b-2 border-blue-500 border-dashed">
+              <div className="overflow-hidden bg-white p-1 rounded-t-lg border-b-2">
                 <img
                   alt={hotel?.name}
                   src={hotel?.image}
@@ -32,7 +32,7 @@ function PropertyCard({ hotel }) {
             }
             className="w-[300px] border-2 rounded-lg p-1"
           >
-            <Title level={4} className="line-clamp-2">
+            <Title level={4} className="line-clamp-2 h-16">
               {hotel.name}
             </Title>
             <Text type="secondary">

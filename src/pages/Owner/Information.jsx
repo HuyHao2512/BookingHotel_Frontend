@@ -6,6 +6,7 @@ import ImageModal from "../../components/Modal/ImageModal";
 import { EditOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import UpdatePropertyModal from "../../components/Modal/UpdatePropertyModal";
+import { MapContainer, TileLayer } from "react-leaflet";
 
 function Information() {
   const { id } = useParams();
@@ -15,7 +16,6 @@ function Information() {
   const handleShowAllImages = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
   if (isLoading) return <div>Đang tải...</div>;
-
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-4">
@@ -81,15 +81,31 @@ function Information() {
         <h2 className="text-2xl font-semibold text-[#082a5e] mb-2">
           Vị trí trên bản đồ
         </h2>
-        <iframe
-          title="hotel-map"
-          src={`https://maps.google.com/maps?q=${hotel.lat},${hotel.long}&z=15&output=embed`}
-          width="100%"
-          height="400"
-          allowFullScreen=""
-          loading="lazy"
-          className="rounded-lg shadow"
-        ></iframe>
+        <div className="relative rounded-xl overflow-hidden border border-gray-300 shadow-lg ml-2 mt-2">
+          {/* Bản đồ */}
+          <MapContainer
+            center={[10.03017, 105.077058]}
+            zoom={13}
+            style={{
+              height: "263px",
+              width: "100%",
+              filter: "blur(1px)",
+              pointerEvents: "none",
+            }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          </MapContainer>
+
+          {/* Nút "Xem bản đồ" */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <button
+              onClick={() => window.open(hotel.googleMapUrl, "_blank")}
+              className="bg-white text-blue-600 border border-blue-600 px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 hover:text-white transition duration-200"
+            >
+              Xem trên bản đồ
+            </button>
+          </div>
+        </div>
       </div>
       <ImageModal
         isVisible={isModalVisible}
