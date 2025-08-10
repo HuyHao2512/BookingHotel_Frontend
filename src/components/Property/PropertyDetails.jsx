@@ -1,5 +1,5 @@
-import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
-import { Typography } from "antd";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { Typography, Rate } from "antd";
 
 const { Title } = Typography;
 
@@ -8,9 +8,7 @@ const PropertyDetails = ({ property }) => {
     <div className="max-w-3xl mb-4 mt-4">
       <div className="flex items-center gap-2">
         <div className="flex text-yellow-400 text-lg">
-          {[...Array(5)].map((_, i) => (
-            <FaStar key={i} />
-          ))}
+          <Rate value={property.rate} disabled />
         </div>
       </div>
 

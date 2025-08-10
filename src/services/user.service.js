@@ -88,12 +88,22 @@ export const likeProperty = async (data) => {
       "Content-Type": "application/json",
     },
   });
-  return res;
+  return res.data;
 };
 
 export const getLikedProperties = async (id) => {
   const token = localStorage.getItem("accessToken");
   const res = await axios.get(`${URL}/liked/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
+
+export const dislikeProperties = async (userId, propertyId) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.delete(`${URL}/liked/${userId}/${propertyId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

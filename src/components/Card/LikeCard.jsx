@@ -17,7 +17,7 @@ const LikeCard = ({ hotel }) => {
         <Col span={18}>
           <h2 className="ml-4 mt-2 text-xl text-blue-700">{hotel.name}</h2>
           <div className="absolute top-3 right-0">
-            <ButtonLike propertyId={hotel._id} />
+            <ButtonLike propertyId={hotel._id} initialLiked={true} />
           </div>
 
           <p className="ml-4 text-gray-500">

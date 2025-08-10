@@ -38,14 +38,6 @@ function PropertyCard({ hotel }) {
             <Text type="secondary">
               <EnvironmentOutlined /> {hotel.address}
             </Text>
-            <button
-              className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md"
-              onClick={(event) => {
-                event.stopPropagation();
-              }}
-            >
-              <ButtonLike propertyId={hotel._id} />
-            </button>
 
             <div className="flex justify-center items-center">
               <Rate allowHalf defaultValue={hotel.rate} disabled />

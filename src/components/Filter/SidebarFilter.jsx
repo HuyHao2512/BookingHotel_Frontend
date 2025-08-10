@@ -7,7 +7,6 @@ import useAmenities from "../../hooks/useAmenities";
 const SidebarFilter = ({ setFilters }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Trạng thái bộ lọc
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null); // chỉ chọn 1 category
   const [selectedRate, setSelectedRate] = useState(null);
@@ -15,7 +14,6 @@ const SidebarFilter = ({ setFilters }) => {
   const { data: amenities } = useAmenities();
   const { data: categories } = useCategory();
 
-  // Đồng bộ state từ URL khi tải lại trang
   useEffect(() => {
     const amenitiesFromURL = searchParams.get("amenities")?.split(",") || [];
     const categoryFromURL = searchParams.get("categoryId") || null;
@@ -26,7 +24,6 @@ const SidebarFilter = ({ setFilters }) => {
     setSelectedRate(rateFromURL);
   }, [searchParams]);
 
-  // Hàm apply bộ lọc
   const applyFilter = (amenities, category, rate) => {
     const params = new URLSearchParams();
     if (amenities.length) params.set("amenities", amenities.join(","));
@@ -41,7 +38,6 @@ const SidebarFilter = ({ setFilters }) => {
     });
   };
 
-  // Amenities
   const handleAmenitiesChange = (checked, id) => {
     const newAmenities = checked
       ? [...selectedAmenities, id]
@@ -51,14 +47,12 @@ const SidebarFilter = ({ setFilters }) => {
     applyFilter(uniqueAmenities, selectedCategory, selectedRate);
   };
 
-  // Category (chỉ chọn 1)
   const handleCategoryChange = (checked, id) => {
     const newCategory = checked ? id : null;
     setSelectedCategory(newCategory);
     applyFilter(selectedAmenities, newCategory, selectedRate);
   };
 
-  // Rate (chỉ chọn 1)
   const handleRateChange = (checked, rate) => {
     const newRate = checked ? rate : null;
     setSelectedRate(newRate);
@@ -69,7 +63,6 @@ const SidebarFilter = ({ setFilters }) => {
     <div className="w-1/4 p-4 bg-white shadow-lg rounded-xl border border-gray-200 max-h-[957px] overflow-y-auto mt-20">
       <h3 className="text-lg font-semibold mb-2">Chọn lọc theo:</h3>
 
-      {/* Bộ lọc xếp hạng sao */}
       <div className="mb-4">
         <h4 className="font-semibold">Xếp hạng sao</h4>
         {[5, 4, 3, 2, 1].map((rate) => (
@@ -86,7 +79,6 @@ const SidebarFilter = ({ setFilters }) => {
         ))}
       </div>
 
-      {/* Bộ lọc loại khách sạn */}
       <div className="mb-4">
         <h4 className="font-semibold">Loại khách sạn</h4>
         <div className="flex flex-col gap-2">
@@ -107,7 +99,6 @@ const SidebarFilter = ({ setFilters }) => {
         </div>
       </div>
 
-      {/* Bộ lọc tiện ích */}
       <div className="mb-4">
         <h4 className="font-semibold">Tiện ích</h4>
         <div className="grid grid-cols-1 gap-2">

@@ -1,18 +1,40 @@
+import { useMutation } from "@tanstack/react-query";
 import { message } from "antd";
 import React, { useState } from "react";
 import styled from "styled-components";
+import * as userService from "../../services/user.service";
 
-const ButtonLike = () => {
-  const [isLiked, setIsLiked] = useState(false);
+const ButtonLike = ({ propertyId, initialLiked = false }) => {
+  const [isLiked, setIsLiked] = useState(initialLiked);
+  const userId = localStorage.getItem("userId");
 
-  const handleLike = () => {
-    setIsLiked((prev) => !prev);
-    if (!isLiked) {
-      message.destroy();
+  const likeMutation = useMutation({
+    mutationFn: (data) => likeProperty(data),
+    onSuccess: () => {
+      setIsLiked(true);
       message.success("Đã thêm vào danh sách yêu thích");
-    } else {
-      message.destroy();
+    },
+    onError: () => {
+      message.error("Có lỗi khi thêm yêu thích");
+    },
+  });
+
+  const dislikeMutation = useMutation({
+    mutationFn: ({ userId, propertyId }) =>
+      userService.dislikeProperties(userId, propertyId),
+    onSuccess: () => {
+      setIsLiked(false);
       message.info("Đã xóa khỏi danh sách yêu thích");
+    },
+    onError: () => {
+      message.error("Có lỗi khi xóa yêu thích");
+    },
+  });
+  const handleLike = async () => {
+    if (isLiked) {
+      dislikeMutation.mutate({ userId, propertyId });
+    } else {
+      likeMutation.mutate({ user: userId, propertyId: propertyId });
     }
   };
 

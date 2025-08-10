@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import LikeCard from "../../components/Card/LikeCard";
-import useProperties from "../../hooks/useProperties";
+import useListLiked from "../../hooks/useListLiked";
 
 const LikePage = () => {
+  const userId = localStorage.getItem("userId");
   const [visibleCount, setVisibleCount] = useState(4); // Hiển thị 4 khách sạn ban đầu
   const {
     data: hotels,
     isLoading: isLoadingHotel,
     isError: isErrorHotel,
-  } = useProperties();
+  } = useListLiked(userId);
+  console.log(hotels);
   if (isErrorHotel) {
     return <h1>Lỗi: {isErrorHotel.message || "Không thể tải dữ liệu"}</h1>;
   }

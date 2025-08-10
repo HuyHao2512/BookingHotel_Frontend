@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Anchor, Button, Col, Row, Tag } from "antd";
+import * as userService from "../../services/user.service";
+import { Anchor, Button, Col, message, Row, Tag } from "antd";
 import PropertyDetails from "../../components/Property/PropertyDetails";
 import PropertyImages from "../../components/Property/PropertyImages";
 import PropertyAmenities from "../../components/Property/PropertyAmenities";
@@ -11,6 +12,7 @@ import { useParams } from "react-router-dom";
 import useGetPropertyById from "../../hooks/useGetPropertyById";
 import useRoomByProperty from "../../hooks/useRoomByProperty";
 import { useBooking } from "../../contexts/BookingContext";
+import { useMutation } from "@tanstack/react-query";
 const PropertyPage = () => {
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -22,6 +24,16 @@ const PropertyPage = () => {
     isLoading: isRoomsLoading,
     isError: isRoomsError,
   } = useRoomByProperty(id);
+  const likeMutation = useMutation({
+    mutationFn: (data) => userService.likeProperty(data),
+    onSuccess: (data) => {
+      message.success("Lưu chỗ nghỉ thành công");
+    },
+    onError: (error) => {
+      console.log("Error:", error);
+      message.warning("Bạn đã lưu chỗ nghỉ này rồi");
+    },
+  });
   const [propertyName, setPropertyName] = useState("");
   const [propertyAddress, setPropertyAddress] = useState("");
   useEffect(() => {
@@ -50,10 +62,16 @@ const PropertyPage = () => {
 
   const handleShowAllImages = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
+
+  const handleSaveProperty = (propertyId) => {
+    likeMutation.mutate({
+      user: localStorage.getItem("userId"),
+      property: propertyId,
+    });
+  };
   return (
     <div className="w-full px-6 mt-6 py-8">
       <div className="max-w-screen-xl mx-auto relative">
-        {/* Thanh điều hướng */}{" "}
         <div className="border-b pb-2 flex justify-around w-full">
           <Anchor
             direction="horizontal"
@@ -71,7 +89,6 @@ const PropertyPage = () => {
             className="w-full flex justify-around"
           />
         </div>
-        {/* Nội dung */}
         <div id="part-1" className="w-full h-full">
           <PropertyDetails property={property} />
           <Row className="w-full h-full mt-4">
@@ -115,8 +132,10 @@ const PropertyPage = () => {
                   Đặt ngay
                 </button>
 
-                {/* Nút lưu */}
-                <button className="w-full mt-2 border border-blue-600 text-blue-600 py-2 rounded-lg font-medium hover:bg-blue-100 transition">
+                <button
+                  className="w-full mt-2 border border-blue-600 text-blue-600 py-2 rounded-lg font-medium hover:bg-blue-100 transition"
+                  onClick={() => handleSaveProperty(property._id)}
+                >
                   Lưu chỗ nghỉ
                 </button>
               </div>
