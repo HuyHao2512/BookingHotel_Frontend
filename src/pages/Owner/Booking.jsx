@@ -172,8 +172,39 @@ const Booking = () => {
         {selectedBooking && (
           <div>
             <p>
-              <strong>Khách hàng:</strong> {selectedBooking.customer}
+              <strong>Khách hàng:</strong> {selectedBooking.name}
             </p>
+            <p>
+              <strong>Email:</strong> {selectedBooking.email}
+            </p>
+            <p>
+              <strong>Số điện thoại:</strong> {selectedBooking.phone}
+            </p>
+            <p>
+              <strong>Ghi chú:</strong>{" "}
+              {selectedBooking.description === ""
+                ? "Không có ghi chú"
+                : selectedBooking.description}
+            </p>
+            <p>
+              <strong>Phương thức thanh toán:</strong>{" "}
+              {selectedBooking.paymentMethod === "2"
+                ? "Online"
+                : selectedBooking.paymentMethod === "1"
+                ? "Trực tiếp"
+                : "Không xác định"}
+            </p>
+            {selectedBooking.paymentMethod === "2" ? (
+              <p>
+                <strong>Trạng thái thanh toán:</strong>
+                {selectedBooking.isPaid === true
+                  ? " Đã thanh toán"
+                  : " Chưa thanh toán"}
+              </p>
+            ) : (
+              <p></p>
+            )}
+
             <p>
               <strong>Nhận phòng:</strong> {formatDate(selectedBooking.checkIn)}
             </p>

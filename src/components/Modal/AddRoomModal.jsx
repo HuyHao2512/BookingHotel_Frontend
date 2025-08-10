@@ -18,11 +18,14 @@ import useFindByOwner from "../../hooks/useFindByOwner";
 import * as ownerService from "../../services/owner.service";
 import { useParams } from "react-router-dom";
 import Loading from "../Loading/Loading";
+import useListRoomByOwner from "../../hooks/useListRoomByOwner";
 const AddRoomModal = ({ isAddRoomModalOpen, handleCancel }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { id } = useParams();
+  const { refetch } = useListRoomByOwner(id);
   const {
     data: typeRoomData,
     isLoading: isLoadingTypeRoom,
@@ -69,6 +72,8 @@ const AddRoomModal = ({ isAddRoomModalOpen, handleCancel }) => {
     mutationFn: (formData) => ownerService.createRoom(formData),
     onSuccess: () => {
       message.success("Tạo phòng thành công!");
+      refetch();
+      form.resetFields();
       handleCancel();
     },
     onError: (error) => {

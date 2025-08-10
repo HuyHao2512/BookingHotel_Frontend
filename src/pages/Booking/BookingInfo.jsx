@@ -72,14 +72,14 @@ function BookingInfo() {
   const handleConfirm = () => {
     bookingMutation.mutate(booking);
   };
-  console.log("Booking Info:", booking);
   const handlePayPayment = async () => {
     const amount = booking.finalPrice;
     const userId = booking.user;
 
     const bankCode = "NCB";
-    const orderInfo = `Thanh toán đặt phòng cho ${booking.propertyName}`;
+    const orderInfo = "Thanh toán";
     localStorage.setItem("pendingBooking", JSON.stringify(booking));
+    console.log("aa", amount, userId, bankCode, orderInfo);
     try {
       const response = await axios.post(
         "http://localhost:3000/payment/vnpay/create", // URL backend của bạn
@@ -88,6 +88,11 @@ function BookingInfo() {
           userId,
           bankCode,
           orderInfo,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
       if (booking.discountCode) {
@@ -96,8 +101,9 @@ function BookingInfo() {
           code: booking.discountCode,
         });
       }
-      if (response.data.data?.paymentUrl) {
+      if (response.data.success && response.data.data?.paymentUrl) {
         window.location.href = response.data.data.paymentUrl;
+        console.log(response.data);
       } else {
         message.error("Không thể tạo liên kết thanh toán.");
       }
@@ -196,7 +202,7 @@ function BookingInfo() {
                           {booking.rooms.length > 0 ? (
                             booking.rooms.map((room, index) => (
                               <p key={index} className="text-lg">
-                                {room.quantity} phòng {room.name}
+                                {room.quantity} {room.name}
                               </p>
                             ))
                           ) : (

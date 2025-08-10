@@ -48,7 +48,6 @@ const Header = () => {
     const searchValue = value || searchInput;
     if (!searchValue) return;
     navigate(`/search?cityName=${searchValue}`);
-    setCity("");
     setSearchInput("");
   };
   if (isCityError) {

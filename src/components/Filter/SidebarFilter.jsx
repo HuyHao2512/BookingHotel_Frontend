@@ -7,82 +7,62 @@ import useAmenities from "../../hooks/useAmenities";
 const SidebarFilter = ({ setFilters }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Trạng thái bộ lọc (state nội bộ)
+  // Trạng thái bộ lọc
   const [selectedAmenities, setSelectedAmenities] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedRate, setSelectedRate] = useState(null); // Chỉ chọn 1 rate
+  const [selectedCategory, setSelectedCategory] = useState(null); // chỉ chọn 1 category
+  const [selectedRate, setSelectedRate] = useState(null);
 
-  // Fetch dữ liệu từ API
   const { data: amenities } = useAmenities();
   const { data: categories } = useCategory();
 
-  // Đồng bộ state từ URL khi trang tải lại
+  // Đồng bộ state từ URL khi tải lại trang
   useEffect(() => {
     const amenitiesFromURL = searchParams.get("amenities")?.split(",") || [];
-    const categoriesFromURL = searchParams.get("categoryId")?.split(",") || [];
+    const categoryFromURL = searchParams.get("categoryId") || null;
     const rateFromURL = parseInt(searchParams.get("minRate")) || null;
 
     setSelectedAmenities(amenitiesFromURL);
-    setSelectedCategories(categoriesFromURL);
+    setSelectedCategory(categoryFromURL);
     setSelectedRate(rateFromURL);
   }, [searchParams]);
 
-  // Hàm tự động áp dụng filter
-  const applyFilter = (amenities, categories, rate) => {
-    // Cập nhật URL
+  // Hàm apply bộ lọc
+  const applyFilter = (amenities, category, rate) => {
     const params = new URLSearchParams();
     if (amenities.length) params.set("amenities", amenities.join(","));
-    if (categories.length) params.set("categoryId", categories.join(","));
+    if (category) params.set("categoryId", category);
     if (rate) params.set("minRate", rate);
     setSearchParams(params);
 
-    // Gửi bộ lọc ra ngoài qua setFilters
     setFilters({
-      amenities: amenities,
-      categoryId: categories,
+      amenities,
+      categoryId: category || undefined,
       minRate: rate || undefined,
     });
   };
 
-  // Hàm xử lý checkbox amenities
+  // Amenities
   const handleAmenitiesChange = (checked, id) => {
     const newAmenities = checked
       ? [...selectedAmenities, id]
       : selectedAmenities.filter((item) => item !== id);
-
     const uniqueAmenities = [...new Set(newAmenities)];
     setSelectedAmenities(uniqueAmenities);
-
-    // Tự động áp dụng filter
-    applyFilter(uniqueAmenities, selectedCategories, selectedRate);
+    applyFilter(uniqueAmenities, selectedCategory, selectedRate);
   };
 
-  // Hàm xử lý checkbox categories
-  const handleCategoriesChange = (checked, id) => {
-    const newCategories = checked
-      ? [...selectedCategories, id]
-      : selectedCategories.filter((item) => item !== id);
-
-    const uniqueCategories = [...new Set(newCategories)];
-    setSelectedCategories(uniqueCategories);
-
-    // Tự động áp dụng filter
-    applyFilter(selectedAmenities, uniqueCategories, selectedRate);
+  // Category (chỉ chọn 1)
+  const handleCategoryChange = (checked, id) => {
+    const newCategory = checked ? id : null;
+    setSelectedCategory(newCategory);
+    applyFilter(selectedAmenities, newCategory, selectedRate);
   };
 
-  // Hàm xử lý checkbox rate (chỉ chọn 1)
+  // Rate (chỉ chọn 1)
   const handleRateChange = (checked, rate) => {
-    let newRate;
-    if (checked) {
-      newRate = rate;
-    } else {
-      newRate = null;
-    }
-
+    const newRate = checked ? rate : null;
     setSelectedRate(newRate);
-
-    // Tự động áp dụng filter
-    applyFilter(selectedAmenities, selectedCategories, newRate);
+    applyFilter(selectedAmenities, selectedCategory, newRate);
   };
 
   return (
@@ -98,13 +78,7 @@ const SidebarFilter = ({ setFilters }) => {
             className="flex items-center gap-2 cursor-pointer mb-1"
           >
             <Checkbox
-              onChange={(e) => {
-                if (e.target.checked) {
-                  handleRateChange(true, rate);
-                } else {
-                  handleRateChange(false, rate);
-                }
-              }}
+              onChange={(e) => handleRateChange(e.target.checked, rate)}
               checked={selectedRate === rate}
             />
             <Rate disabled defaultValue={rate} />
@@ -123,9 +97,9 @@ const SidebarFilter = ({ setFilters }) => {
             >
               <Checkbox
                 onChange={(e) =>
-                  handleCategoriesChange(e.target.checked, category._id)
+                  handleCategoryChange(e.target.checked, category._id)
                 }
-                checked={selectedCategories.includes(category._id)}
+                checked={selectedCategory === category._id}
               />
               <span className="text-gray-700">{category.name}</span>
             </label>

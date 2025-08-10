@@ -59,12 +59,13 @@ const PropertyPage = () => {
             direction="horizontal"
             items={[
               { key: "part-1", href: "#part-1", title: "Tổng quan" },
+              { key: "part-2", href: "#part-2", title: "Thông tin phòng" },
               {
                 key: "part-3",
                 href: "#part-3",
                 title: "Thông tin & tiện ích",
               },
-              { key: "part-2", href: "#part-2", title: "Thông tin phòng" },
+
               { key: "part-4", href: "#part-4", title: "Đánh giá" },
             ]}
             className="w-full flex justify-around"

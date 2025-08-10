@@ -42,8 +42,6 @@ const DiscountList = () => {
   return (
     <div className="w-full px-6 py-8">
       <div className="max-w-screen-xl mx-auto relative">
-        <h2 className="text-xl font-semibold mb-4">Deal hời cho bạn</h2>
-
         {/* Nút Mũi Tên */}
         <button
           ref={prevRef}

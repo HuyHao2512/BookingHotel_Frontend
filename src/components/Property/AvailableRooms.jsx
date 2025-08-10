@@ -15,38 +15,50 @@ const AvailableRooms = ({ dataSource }) => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { updateBooking } = useBooking(); // Gọi từ context
-  const [checkInDate, setcheckInDate] = useState(dayjs().add(1, "day")); // Ngày mai
-  const [checkOutDate, setcheckOutDate] = useState(dayjs().add(2, "day")); // Ngày kia
-  const checkIn = checkInDate.format("YYYY-MM-DD");
-  const checkOut = checkOutDate.format("YYYY-MM-DD");
+  const { updateBooking } = useBooking();
+  const [checkInDate, setcheckInDate] = useState(dayjs().add(1, "day"));
+  const [checkOutDate, setcheckOutDate] = useState(dayjs().add(2, "day"));
+  const [checkIn, setCheckIn] = useState(checkInDate.format("YYYY-MM-DD"));
+  const [checkOut, setCheckOut] = useState(checkOutDate.format("YYYY-MM-DD"));
   const [rooms, setRooms] = useState(
     dataSource.map((room) => ({ ...room, selectedQuantity: 0 }))
   );
+  const [hasSearched, setHasSearched] = useState(false); // Thêm state để kiểm tra đã tìm kiếm chưa
 
-  // Đổi tên biến trả về từ hook để tránh nhầm lẫn
   const {
     data: availableRoomsData,
     isLoading,
     isError,
   } = useAvailableRooms(id, checkIn, checkOut);
+
   const disabledDate = (current) => {
-    return current && current < dayjs().startOf("day"); // Không cho chọn ngày quá khứ
+    return current && current < dayjs().startOf("day");
   };
+
   const handleSearch = () => {
-    if (!checkIn || !checkOut) {
+    if (!checkInDate || !checkOutDate) {
       message.error("Vui lòng chọn ngày để kiểm tra");
       return;
     }
+
+    // Cập nhật checkIn và checkOut khi nhấn tìm kiếm
+    const newCheckIn = checkInDate.format("YYYY-MM-DD");
+    const newCheckOut = checkOutDate.format("YYYY-MM-DD");
+    setCheckIn(newCheckIn);
+    setCheckOut(newCheckOut);
+
     if (!availableRoomsData) {
       message.error("Không có dữ liệu phòng khả dụng");
       return;
     }
-    // Cập nhật danh sách phòng mới từ dữ liệu trả về của API
+
+    // Cập nhật danh sách phòng và đánh dấu đã tìm kiếm
     setRooms(
       availableRoomsData.map((room) => ({ ...room, selectedQuantity: 0 }))
     );
+    setHasSearched(true);
   };
+
   const handleConfirmBooking = () => {
     if (!user) {
       message.error("Vui lòng đăng nhập để đặt phòng");
@@ -78,7 +90,13 @@ const AvailableRooms = ({ dataSource }) => {
 
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
   const handleQuantityChange = (value, room) => {
+    if (!hasSearched) {
+      message.warning("Vui lòng nhấn Tìm kiếm trước khi chọn số lượng phòng");
+      return;
+    }
+
     setRooms((prevRooms) =>
       prevRooms.map((r) =>
         r._id === room._id ? { ...r, selectedQuantity: value } : r
@@ -91,6 +109,7 @@ const AvailableRooms = ({ dataSource }) => {
     setIsModalVisible(true);
     console.log("Chi tiết phòng:", room);
   };
+
   if (isLoading)
     return (
       <div>
@@ -98,6 +117,7 @@ const AvailableRooms = ({ dataSource }) => {
       </div>
     );
   if (isError) return <div>Error</div>;
+
   return (
     <div className="w-full h-full mt-4">
       <h1 className="text-2xl font-bold mb-4">Phòng trống</h1>
@@ -113,6 +133,7 @@ const AvailableRooms = ({ dataSource }) => {
             onChange={(values) => {
               setcheckInDate(values?.[0]);
               setcheckOutDate(values?.[1]);
+              setHasSearched(false); // Reset trạng thái tìm kiếm khi thay đổi ngày
             }}
             disabledDate={disabledDate}
           />
@@ -127,6 +148,7 @@ const AvailableRooms = ({ dataSource }) => {
         rooms={rooms}
         handleQuantityChange={handleQuantityChange}
         showRoomInfo={showRoomInfo}
+        disableInput={!hasSearched} // Truyền prop để disable input khi chưa tìm kiếm
       />
       <Button type="primary" className="mt-4" onClick={handleConfirmBooking}>
         Đặt phòng

@@ -1,6 +1,7 @@
 import { Layout, Card, Button } from "antd";
 import {
-  LineChart,
+  ComposedChart,
+  Bar,
   Line,
   XAxis,
   YAxis,
@@ -60,27 +61,43 @@ const Dashboard = () => {
         </div>
         <Card className="shadow-lg rounded-xl p-4 bg-white">
           <ResponsiveContainer width="100%" height={350}>
-            <LineChart
+            <ComposedChart
               data={transformedData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis dataKey="Tháng" />
-              <YAxis />
+              <YAxis
+                yAxisId="left"
+                allowDecimals={false}
+                domain={[0, "auto"]}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                domain={[0, "auto"]}
+                tickFormatter={(value) => `${(value / 1_000_000).toFixed(1)}M`}
+              />
               <Tooltip />
               <Legend />
-              <Line
-                type="monotone"
+              {/* Bar chart: Số lượt đặt */}
+              <Bar
+                yAxisId="left"
                 dataKey="Số lượt đặt"
-                stroke="#4CAF50"
-                strokeWidth={2}
+                fill="#4CAF50"
+                barSize={40}
               />
+              {/* Line chart: Doanh thu */}
               <Line
+                yAxisId="right"
                 type="monotone"
                 dataKey="Doanh thu (VND)"
                 stroke="#3B82F6"
                 strokeWidth={2}
+                dot={{ r: 5 }}
+                activeDot={{ r: 7 }}
+                label={{ position: "top" }}
               />
-            </LineChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </Card>
       </Content>

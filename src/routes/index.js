@@ -25,7 +25,7 @@ import GoogleCallback from "../pages/AuthPage/GoogleCallback";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import ManangerPage from "../pages/Owner/ManangerPage";
 import Information from "../pages/Owner/Information";
-import ListDiscountAdmin from "../pages/Admin/ListDiscounyAdmin";
+import ListDiscountAdmin from "../pages/Admin/ListDiscountAdmin";
 
 export const routes = [
   {
