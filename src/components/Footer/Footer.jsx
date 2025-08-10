@@ -8,7 +8,7 @@ const Footer = () => {
             <div>
               <h3 className="font-bold mb-2">Hỗ trợ</h3>
               <ul className="space-y-1 text-gray-600">
-                <li>Các câu hỏi thường gặp về COVID-19</li>
+                <li>Các câu hỏi thường gặp</li>
                 <li>Quản lí các chuyến đi của bạn</li>
                 <li>Liên hệ Dịch vụ Khách hàng</li>
                 <li>Trung tâm thông tin bảo mật</li>

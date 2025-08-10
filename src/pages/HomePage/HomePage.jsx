@@ -7,6 +7,7 @@ import useCategory from "../../hooks/useCategory";
 import { FloatButton } from "antd";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import DiscountList from "../../components/Discount/DiscountList";
+import BookingGuide from "../../components/Home/BookingGuide";
 function HomePage() {
   const {
     data: categoryData,
@@ -26,7 +27,7 @@ function HomePage() {
       <DiscountList />
       <Explore />
       <PropertyList />
-
+      <BookingGuide />
       <Chatbot />
       {/* <FloatButton.BackTop visibilityHeight={0} /> */}
     </div>

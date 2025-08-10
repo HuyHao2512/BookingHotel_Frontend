@@ -13,6 +13,7 @@ import useGetPropertyById from "../../hooks/useGetPropertyById";
 import useRoomByProperty from "../../hooks/useRoomByProperty";
 import { useBooking } from "../../contexts/BookingContext";
 import { useMutation } from "@tanstack/react-query";
+import PropertyPolicies from "../../components/Property/ContactPolicy";
 const PropertyPage = () => {
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -153,6 +154,7 @@ const PropertyPage = () => {
               <p className="whitespace-pre-line mt-8 mb-8 font-beVietnam leading-relaxed text-gray-600">
                 {property.description}
               </p>
+              <PropertyPolicies />
             </Col>
             <Col span={6}>
               <h1 className="text-2xl font-bold mb-4">Tiện nghi</h1>
