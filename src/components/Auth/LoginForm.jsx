@@ -43,7 +43,7 @@ const LoginForm = ({ toggleForm }) => {
   return (
     <StyledWrapper>
       <div className="container">
-        <div className="heading">Sign In</div>
+        <div className="heading">Đăng nhập</div>
         <form action className="form" onSubmit={handleSubmit}>
           <input
             required
@@ -65,18 +65,15 @@ const LoginForm = ({ toggleForm }) => {
             value={password} // Gán giá trị từ state
             onChange={(e) => setPassword(e.target.value)} // Cập nhật state
           />
-          <span className="forgot-password">
-            <a href="#">Quên mật khẩu ?</a>
-          </span>
           <input
             className="login-button"
             type="submit"
-            value={loginMutation.isLoading ? "Signing in..." : "Sign In"}
+            value={loginMutation.isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
             disabled={loginMutation.isLoading}
           />
         </form>
         <div className="social-account-container">
-          <span className="title">Or Sign in with</span>
+          <span className="title">Hoặc đăng nhập với</span>
           <div className="social-accounts">
             <button className="social-button google" onClick={handleLoginGoole}>
               <svg

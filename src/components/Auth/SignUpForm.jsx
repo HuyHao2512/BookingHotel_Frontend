@@ -51,7 +51,7 @@ const SignUpForm = ({ toggleForm }) => {
   return (
     <StyledWrapper>
       <div className="container">
-        <div className="heading">Sign Up</div>
+        <div className="heading">Đăng ký</div>
         <form action className="form" onSubmit={handleSubmit}>
           <input
             required
@@ -91,7 +91,7 @@ const SignUpForm = ({ toggleForm }) => {
               checked={isOwner}
               onChange={(e) => setIsOwner(e.target.checked)}
             />{" "}
-            Đăng ký với tư cách chủ cho thuê
+            Đăng ký tư cách chủ cho thuê
           </label>
 
           <input
@@ -100,7 +100,7 @@ const SignUpForm = ({ toggleForm }) => {
             defaultValue="Sign Up"
           />
         </form>
-        <div className="social-account-container">
+        {/* <div className="social-account-container">
           <span className="title">Or Sign in with</span>
           <div className="social-accounts">
             <button className="social-button google">
@@ -134,9 +134,9 @@ const SignUpForm = ({ toggleForm }) => {
               </svg>
             </button>
           </div>
-        </div>
+        </div> */}
         <span className="agreement">
-          <p>Bạn chưa có tài khoản?</p>{" "}
+          <p>Bạn đã có tài khoản?</p>{" "}
           <button onClick={toggleForm}>Đăng nhập</button>
         </span>
       </div>

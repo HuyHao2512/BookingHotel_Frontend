@@ -53,7 +53,7 @@ const Dashboard = () => {
       <Content className="p-6 w-full max-w-4xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-gray-800">
-            Thống kê doanh thu
+            Thống kê số lượt đặt
           </h2>
           <Button type="primary" onClick={handleExportExcel}>
             Xuất Excel
@@ -87,7 +87,7 @@ const Dashboard = () => {
                 barSize={40}
               />
               {/* Line chart: Doanh thu */}
-              <Line
+              {/* <Line
                 yAxisId="right"
                 type="monotone"
                 dataKey="Doanh thu (VND)"
@@ -96,7 +96,7 @@ const Dashboard = () => {
                 dot={{ r: 5 }}
                 activeDot={{ r: 7 }}
                 label={{ position: "top" }}
-              />
+              /> */}
             </ComposedChart>
           </ResponsiveContainer>
         </Card>

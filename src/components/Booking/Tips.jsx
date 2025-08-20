@@ -9,13 +9,13 @@ const Tips = () => {
       <div className="mt-2 flex item-center">
         <p>
           <span className="font-bold">Linh hoạt:</span> Bạn có thể hủy phòng
-          miễn phí đến 12h ngày 12 tháng 3
+          miễn phí trước khi phòng được xác nhận
         </p>
       </div>
       <div className="mt-2 flex item-center">
         <p>
-          <span className="font-bold">Thanh toán:</span> Với đơn đặt phòng từ
-          1.000.000đ, bạn phải thanh toán trước 50%.
+          <span className="font-bold">Thanh toán:</span> Bạn có thể thanh toán
+          trực tiếp hoặc qua các ví điện tử
         </p>
       </div>
     </div>

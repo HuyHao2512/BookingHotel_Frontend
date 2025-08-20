@@ -24,12 +24,6 @@ const menuItems = [
     icon: <HeartOutlined />,
     path: "/like",
   },
-  {
-    key: "change-password",
-    label: "Đổi mật khẩu",
-    icon: <LockOutlined />,
-    path: "/change-password",
-  },
   { key: "logout", label: "Đăng xuất", icon: <LogoutOutlined />, danger: true },
 ];
 

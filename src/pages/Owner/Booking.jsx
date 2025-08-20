@@ -98,12 +98,6 @@ const Booking = () => {
       render: (price) => `${price.toLocaleString("vi-VN")} VND`, // Định dạng tiền tệ
     },
     {
-      title: "Thanh toán",
-      dataIndex: "isPaid",
-      key: "isPaid",
-      render: (isPaid) => (isPaid ? "Đã thanh toán" : "Chưa thanh toán"),
-    },
-    {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",

@@ -58,7 +58,6 @@ const Header = () => {
   }
   return (
     <header className="bg-[url('/images/bg.webp')] bg-cover bg-center text-blue-200 px-6 py-6 shadow-lg h-[400px] ">
-      {/* Top Navigation */}
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         <Link to="/">
           <img
@@ -78,16 +77,13 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Heading */}
       <div className="mt-8 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight">
           Tìm chỗ nghỉ tiếp theo của bạn
         </h1>
       </div>
 
-      {/* Search Bar */}
       <div className="bg-white p-4 rounded-full mt-8 flex items-center shadow-xl border-2 border-yellow-400 w-[700px] mx-auto gap-4 transform transition-transform duration-300">
-        {/* Chọn địa điểm */}
         <div className="flex items-center w-[500px] px-5 border-r border-gray-200">
           <HomeOutlined className="mr-3 text-xl text-gray-600" />
           <Select
