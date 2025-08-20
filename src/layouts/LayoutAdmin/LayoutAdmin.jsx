@@ -94,6 +94,11 @@ function LayoutAdmin() {
               label: "Tiện nghi",
             },
             {
+              key: "/admin/revenue",
+              icon: <DatabaseOutlined />,
+              label: "Thống kê",
+            },
+            {
               key: "/admin/typeroom",
               icon: <ContainerOutlined />,
               label: "Danh sách loại phòng",

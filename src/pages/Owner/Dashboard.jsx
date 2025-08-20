@@ -1,4 +1,4 @@
-import { Layout, Card, Button } from "antd";
+import { Layout, Card, Button, Statistic, Row, Col } from "antd";
 import {
   ComposedChart,
   Bar,
@@ -34,6 +34,17 @@ const Dashboard = () => {
     "Doanh thu (VND)": values.totalRevenue,
   }));
 
+  // Calculate statistics
+  const totalBookings = transformedData.reduce(
+    (sum, item) => sum + item["Số lượt đặt"],
+    0
+  );
+  const averageBookings = totalBookings / transformedData.length;
+  const highestBookingMonth = transformedData.reduce(
+    (max, item) => (item["Số lượt đặt"] > max["Số lượt đặt"] ? item : max),
+    transformedData[0]
+  );
+
   const handleExportExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(transformedData);
     const workbook = XLSX.utils.book_new();
@@ -59,6 +70,32 @@ const Dashboard = () => {
             Xuất Excel
           </Button>
         </div>
+        {/* Statistics Section */}
+        <Card className="shadow-lg rounded-xl p-4 bg-white mb-4">
+          <Row gutter={16}>
+            <Col span={8}>
+              <Statistic
+                title="Tổng số lượt đặt"
+                value={totalBookings}
+                suffix="lượt"
+              />
+            </Col>
+            <Col span={8}>
+              <Statistic
+                title="Trung bình mỗi tháng"
+                value={averageBookings.toFixed(1)}
+                suffix="lượt"
+              />
+            </Col>
+            <Col span={8}>
+              <Statistic
+                title="Tháng cao nhất"
+                value={`${highestBookingMonth["Tháng"]} (${highestBookingMonth["Số lượt đặt"]} lượt)`}
+              />
+            </Col>
+          </Row>
+        </Card>
+        {/* Chart Section */}
         <Card className="shadow-lg rounded-xl p-4 bg-white">
           <ResponsiveContainer width="100%" height={350}>
             <ComposedChart
@@ -79,14 +116,13 @@ const Dashboard = () => {
               />
               <Tooltip />
               <Legend />
-              {/* Bar chart: Số lượt đặt */}
               <Bar
                 yAxisId="left"
                 dataKey="Số lượt đặt"
                 fill="#4CAF50"
                 barSize={40}
               />
-              {/* Line chart: Doanh thu */}
+              {/* Uncomment if you want to include the Line chart */}
               {/* <Line
                 yAxisId="right"
                 type="monotone"

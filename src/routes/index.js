@@ -26,6 +26,7 @@ import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import ManangerPage from "../pages/Owner/ManangerPage";
 import Information from "../pages/Owner/Information";
 import ListDiscountAdmin from "../pages/Admin/ListDiscountAdmin";
+import Revenue from "../pages/Admin/Reveune";
 
 export const routes = [
   {
@@ -123,6 +124,10 @@ export const routes = [
       {
         path: "discount",
         page: ListDiscountAdmin,
+      },
+      {
+        path: "revenue",
+        page: Revenue,
       },
     ],
   },

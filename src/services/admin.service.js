@@ -141,3 +141,23 @@ export const removeBanner = async (id) => {
   });
   return res;
 };
+
+export const getRevenue = async () => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.get("http://localhost:3000/booking/all-revenue", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
+
+export const getRevenueCity = async () => {
+  const token = localStorage.getItem("accessToken");
+  const res = await axios.get("http://localhost:3000/booking/revenue-by-city", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+};
